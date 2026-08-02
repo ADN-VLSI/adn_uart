@@ -1,8 +1,9 @@
-module dummy_rtl;
+module dummy_rtl (
+  input  logic clk,
+  input  logic rst_n,
+  output logic bhur
+);
 
-  initial begin
-    $display("Hello World");
-    $finish;
-  end
+  assign bhur = 1'b1;
 
 endmodule
