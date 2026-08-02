@@ -67,6 +67,7 @@ clean_full:
 
 .PHONY: $(REPO_ROOT)/reuse.f
 $(REPO_ROOT)/reuse.f:
+	@git submodule update --init --depth 1
 	@echo -e "\033[1;33m#\033[0m Generating Reusable IP Filelist"
 	@echo "-i $(REPO_ROOT)/include" > $(REPO_ROOT)/reuse.f
 ifeq ($(HAS_SUBMODULES), 1)
@@ -198,7 +199,6 @@ clean_all_docs:
 	@mkdir -p $(SOURCE_DOC_DIR)
 	@rm -f $(SOURCE_DOC_DIR)/*.md
 	@rm -f $(SOURCE_DOC_DIR)/*_top.svg
-	@git submodule update --init --depth 1 -- $(DOCUMENTER)
 
 .PHONY: get_source_doc_header
 get_source_doc_header:
