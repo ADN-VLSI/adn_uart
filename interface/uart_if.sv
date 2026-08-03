@@ -5,6 +5,9 @@ interface uart_if;
   /////////////////////////////////////////////////////////
 
   tri1 line;
+  logic tx_driver;
+
+  assign line = tx_driver;
 
   /////////////////////////////////////////////////////////
   // CONFIGURATION
@@ -37,38 +40,39 @@ interface uart_if;
 
     // Calculate parity
     parity = 0;
-    for (i = 0; i < DATA_BITS; i++)
+    for (i = 0; i < DATA_BITS; i++) begin
         parity = parity ^ data[i];
     if (PARITY_TYPE)                    // ODD parity
         parity = ~parity;
+    end
 
     // IDLE
-    line = 1'b1;        
+    tx_driver = 1'b1;        
     #BITS_TIME
 
     // START BIT
-    line = 1'b0;        
+    tx_driver = 1'b0;        
     #BITS_TIME
 
     // Data bits (LSB first)
     for(i = 0; i < DATA_BITS; i++) begin
-        line = data[i];
+        tx_driver = data[i];
         #BITS_TIME;
     end
 
     // Parity bit enable or not
     if (PARITY_EN) begin
-        line = parity;
-        #BITS_TIME
+        tx_driver = parity;
+        #BITS_TIME;
     end
 
     // Stop bit
-    line = 1'b1;
+    tx_driver = 1'b1;
     #BITS_TIME;
 
     // Second stop bit (Optional)
     if (EXTRA_STOP) begin
-        line = 1'b1;
+        tx_driver = 1'b1;
         #BITS_TIME;
     end
 
@@ -93,20 +97,20 @@ interface uart_if;
     parity = 0;
 
     // Wait for start bit
-    @(negedge line);
+    @(negedge tx_driver);
 
     // Move to center of first data bit
     #(BITS_TIME + BITS_TIME / 2);
 
     // Receive data bits (LSB First)
     for (i = 0; i < DATA_BITS; i++) begin
-        data[i] = line;
+        data[i] = tx_driver;
         #BITS_TIME;
     end
 
     // Receive Parity
     if (PARITY_EN) begin
-        parity = line;
+        parity = tx_driver;
         #BITS_TIME;
     end
 
