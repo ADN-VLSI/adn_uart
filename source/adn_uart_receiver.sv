@@ -1,8 +1,10 @@
 /*
 
-@foez-bhai, write the purpose of this module in markdown format here. This is already in multi-line comment, so don't add any additional comment syntax.
+# Purpose
+This module implements a configurable UART receiver designed to deserialize incoming serial data streams. It supports variable data lengths (5 to 8 bits), optional parity checking (even/odd), and oversampling to ensure robust clock domain synchronization and bit-center sampling.
 
-@foez-bhai, describe the use case of this module in markdown format here. This is already in multi-line comment, so don't add any additional comment syntax.
+### Use Case
+The `adn_uart_receiver` is designed for integration into SoC or FPGA designs requiring asynchronous serial communication. It is typically used to interface with external peripherals, sensors, or debug consoles that transmit data using the standard UART protocol. By providing configurable data widths and parity, it offers flexibility for various communication standards (e.g., RS-232, RS-485) while ensuring reliable data capture through oversampling and synchronization logic.
 
 | REVISION | DATE       | AUTHOR          | DESCRIPTION                                            |
 |----------|------------|-----------------|--------------------------------------------------------|
@@ -16,30 +18,27 @@ Licensed under the MIT License
 See LICENSE file in the project root for full license information
 
 */
-// @foez-bhai, add comments to the parameters, ports
 module adn_uart_receiver #(
-    parameter int OVERSAMPLE = 8
+    parameter int OVERSAMPLE = 8 // Number of samples per bit period
 ) (
-    input logic arst_ni,  // asynchronous reset, active low
-    input logic clk_i,    // clock input
+    input logic arst_ni,  // Asynchronous reset, active low
+    input logic clk_i,    // System clock input
 
-    input logic [1:0] data_bits_i,   // number of data bits (0:5b, 1:6b, 2:7b, 3:8b)
-    input logic       parity_en_i,   // parity enable
-    input logic       parity_type_i, // parity type (0:even, 1:odd)
+    input logic [1:0] data_bits_i,   // Data length config (0:5b, 1:6b, 2:7b, 3:8b)
+    input logic       parity_en_i,   // Parity check enable
+    input logic       parity_type_i, // Parity type (0:even, 1:odd)
 
-    input logic rx_i,  // receive data input
+    input logic rx_i,  // Raw serial receive input
 
-    output logic [7:0] data_o,       // received data output
-    output logic       data_valid_o  // indicates valid received data
+    output logic [7:0] data_o,       // Parallel received data output
+    output logic       data_valid_o  // Pulse indicating valid data on data_o
 );
-
-  // @foez-bhai, add comments to the functional blocks, signals, and submodules
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   // LOCALPARAMS GENERATED
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
-  localparam int HALF_OVERSAMPLE = (OVERSAMPLE / 2) - 1;
+  localparam int HALF_OVERSAMPLE = (OVERSAMPLE / 2) - 1; // Midpoint for bit sampling
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   // TYPEDEFS
@@ -53,7 +52,7 @@ module adn_uart_receiver #(
     STATE_STOP
   } state_e;
 
-  state_e current_state, next_state;
+  state_e current_state, next_state; // FSM state registers
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   // SIGNALS
@@ -61,16 +60,16 @@ module adn_uart_receiver #(
 
   logic                          rx_s;  // Synchronized RX signal
 
-  logic [$clog2(OVERSAMPLE)-1:0] sample_cnt;
-  logic [                   2:0] bit_cnt;
-  logic [                   2:0] target_bit_cnt;
-  logic [                   3:0] active_bit_count;
+  logic [$clog2(OVERSAMPLE)-1:0] sample_cnt; // Counter for oversampling ticks
+  logic [                   2:0] bit_cnt;    // Tracks number of bits received
+  logic [                   2:0] target_bit_cnt; // Configured bit count target
+  logic [                   3:0] active_bit_count; // Number of bits for parity calc
 
-  logic [                   7:0] rx_shift_reg;
-  logic [                   7:0] aligned_data;
-  logic                          rx_parity_bit;
-  logic                          expected_parity;
-  logic                          parity_err;
+  logic [                   7:0] rx_shift_reg; // Shift register for incoming bits
+  logic [                   7:0] aligned_data; // Data shifted to LSB alignment
+  logic                          rx_parity_bit; // Captured parity bit
+  logic                          expected_parity; // Parity calculated from received data
+  logic                          parity_err; // Flag for parity mismatch
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   // ASSIGNMENTS
@@ -93,6 +92,7 @@ module adn_uart_receiver #(
 
   always_comb parity_err = parity_en_i && (rx_parity_bit != expected_parity);
 
+  // FSM Next State Logic
   always_comb begin
     next_state = current_state;
 
@@ -145,6 +145,7 @@ module adn_uart_receiver #(
   // SUBMODULES
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
+  // Synchronize asynchronous RX input to local clock domain
   adn_common_synchronizer #(
       .WIDTH(1),
       .STAGES(2),
@@ -157,6 +158,7 @@ module adn_uart_receiver #(
       .data_o (rx_s)
   );
 
+  // Generate expected parity for validation
   adn_parity_generator #(
       .DATA_WIDTH(8)
   ) u_parity_gen (
@@ -171,6 +173,7 @@ module adn_uart_receiver #(
   // SEQUENTIALS
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
+  // FSM State Register
   always_ff @(posedge clk_i or negedge arst_ni) begin
     if (!arst_ni) begin
       current_state <= STATE_IDLE;
@@ -179,6 +182,7 @@ module adn_uart_receiver #(
     end
   end
 
+  // Data path and control logic
   always_ff @(posedge clk_i or negedge arst_ni) begin
     if (!arst_ni) begin
       sample_cnt    <= '0;
@@ -249,4 +253,3 @@ module adn_uart_receiver #(
   end
 
 endmodule
-
