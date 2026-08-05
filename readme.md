@@ -28,12 +28,8 @@
 ## INTERFACE
 [`uart_if`](document/interface/uart_if.md)
 
-[`dummy_interface`](submodule/adn_common/document/interface/dummy_interface.md)
 
 ## INCLUDE
 [`dummy.svh`](document/include/dummy.md)
 
-[`pmi/assign.svh`](submodule/adn_common/document/include/pmi/assign.md)
-[`pmi/typedef.svh`](submodule/adn_common/document/include/pmi/typedef.md)
-[`vip/adn_common_tb_headers.sv`](submodule/adn_common/document/include/vip/adn_common_tb_headers.md)
 
