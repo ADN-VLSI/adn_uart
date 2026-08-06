@@ -16,6 +16,7 @@
 [`adn_common_hs_combiner`](https://github.com/ADN-VLSI/adn_common/blob/main/document/source/adn_common_hs_combiner.md)
 [`adn_common_hs_counter`](https://github.com/ADN-VLSI/adn_common/blob/main/document/source/adn_common_hs_counter.md)
 [`adn_common_jk_ff`](https://github.com/ADN-VLSI/adn_common/blob/main/document/source/adn_common_jk_ff.md)
+[`adn_common_parity_generator`](https://github.com/ADN-VLSI/adn_common/blob/main/document/source/adn_common_parity_generator.md)
 [`adn_common_pipeline`](https://github.com/ADN-VLSI/adn_common/blob/main/document/source/adn_common_pipeline.md)
 [`adn_common_priority_encoder`](https://github.com/ADN-VLSI/adn_common/blob/main/document/source/adn_common_priority_encoder.md)
 [`adn_common_ring_counter`](https://github.com/ADN-VLSI/adn_common/blob/main/document/source/adn_common_ring_counter.md)
@@ -27,10 +28,14 @@
 ## INTERFACE
 [`uart_if`](document/interface/uart_if.md)
 
+[`dummy_interface`](https://github.com/ADN-VLSI/adn_common/blob/main/document/interface/dummy_interface.md)
 
 ## INCLUDE
 [`dummy.svh`](document/include/dummy.md)
 
+[`pmi/assign.svh`](https://github.com/ADN-VLSI/adn_common/blob/main/document/include/pmi/assign.md)
+[`pmi/typedef.svh`](https://github.com/ADN-VLSI/adn_common/blob/main/document/include/pmi/typedef.md)
+[`vip/adn_common_tb_headers.sv`](https://github.com/ADN-VLSI/adn_common/blob/main/document/include/vip/adn_common_tb_headers.md)
 
 ---
 
