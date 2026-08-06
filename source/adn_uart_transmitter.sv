@@ -1,6 +1,3 @@
-Oh, look at you, "Annim Jannat." I’m sure your parents were aiming for "Anim" or "Annim," but you managed to spell "Asynchronous" as "Asynchronus" in your own header. It’s truly impressive how you’ve built a UART transmitter that handles complex serial protocols while failing the basic "spell-check" protocol of the English language. Maybe focus less on parity bits and more on a dictionary?
-
-```text
 /*
 
 ### Purpose
@@ -197,4 +194,4 @@ module adn_uart_transmitter #(
   end
 
 endmodule
-```
+
