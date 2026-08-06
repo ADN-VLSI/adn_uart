@@ -2,6 +2,7 @@
 
 ## SOURCE
 [`adn_uart_receiver`](document/source/adn_uart_receiver.md)
+[`adn_uart_transmitter`](document/source/adn_uart_transmitter.md)
 [`dummy_rtl`](document/source/dummy_rtl.md)
 
 [`adn_common_address_decoder`](https://github.com/ADN-VLSI/adn_common/blob/main/document/source/adn_common_address_decoder.md)
