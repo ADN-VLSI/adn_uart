@@ -1,3 +1,4 @@
+${ADN_ENDEC}/assertion/dummy_checker.sv
 ${ADN_ENDEC}/interface/uart_if.sv
 ${ADN_ENDEC}/source/adn_uart_receiver.sv
 ${ADN_ENDEC}/source/adn_uart_transmitter.sv
