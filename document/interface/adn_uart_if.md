@@ -1,10 +1,10 @@
-# uart_if (interface)
+# adn_uart_if (interface)
 
-### Source: uart_if.sv
+### Source: adn_uart_if.sv
 
 ## Top IO
 
-<img src="./uart_if_top.svg">
+<img src="./adn_uart_if_top.svg">
 
 ## Parameters
 
