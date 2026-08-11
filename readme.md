@@ -32,9 +32,10 @@
 ## ASSERTION
 [`dummy_checker`](document/assertion/dummy_checker.md)
 
+[`dummy_checker`](https://github.com/ADN-VLSI/adn_common/blob/main/document/assertion/dummy_checker.md)
 
 ## INTERFACE
-[`document/interface/uart_if.md)
+[`adn_uart_if`](document/interface/adn_uart_if.md)
 
 [`dummy_interface`](https://github.com/ADN-VLSI/adn_common/blob/main/document/interface/dummy_interface.md)
 
