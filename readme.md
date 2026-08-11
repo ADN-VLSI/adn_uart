@@ -39,7 +39,6 @@
 
 ## INTERFACE
 [`adn_uart_if`](document/interface/adn_uart_if.md)
-[`document/interface/adn_uart_reg.md)
 
 [`adn_PMI`](https://github.com/ADN-VLSI/adn_common/blob/main/document/interface/adn_PMI.md)
 [`dummy_interface`](https://github.com/ADN-VLSI/adn_common/blob/main/document/interface/dummy_interface.md)
