@@ -36,6 +36,7 @@
 [`https://github.com/ADN-VLSI/adn_common/blob/main/document/assertion/adn_common_pipeline_join_assertion.md)
 [`https://github.com/ADN-VLSI/adn_common/blob/main/document/assertion/adn_common_pipeline_split_assertion.md)
 [`https://github.com/ADN-VLSI/adn_common/blob/main/document/assertion/adn_common_valid_ready_checker.md)
+[`https://github.com/ADN-VLSI/adn_common/blob/main/document/assertion/dummy_checker.md)
 
 ## INTERFACE
 [`adn_uart_if`](document/interface/adn_uart_if.md)
@@ -46,6 +47,7 @@
 ## INCLUDE
 [`dummy.svh`](document/include/dummy.md)
 
+[`https://github.com/ADN-VLSI/adn_common/blob/main/document/include/assertion/valid_ready.md)
 [`pmi/assign.svh`](https://github.com/ADN-VLSI/adn_common/blob/main/document/include/pmi/assign.md)
 [`pmi/typedef.svh`](https://github.com/ADN-VLSI/adn_common/blob/main/document/include/pmi/typedef.md)
 [`vip/adn_common_tb_headers.sv`](https://github.com/ADN-VLSI/adn_common/blob/main/document/include/vip/adn_common_tb_headers.md)
