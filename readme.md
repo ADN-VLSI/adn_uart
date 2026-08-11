@@ -32,16 +32,11 @@
 ## ASSERTION
 [`dummy_checker`](document/assertion/dummy_checker.md)
 
-[`https://github.com/ADN-VLSI/adn_common/blob/main/document/assertion/adn_common_pipeline_assertion.md)
-[`https://github.com/ADN-VLSI/adn_common/blob/main/document/assertion/adn_common_pipeline_join_assertion.md)
-[`https://github.com/ADN-VLSI/adn_common/blob/main/document/assertion/adn_common_pipeline_split_assertion.md)
-[`https://github.com/ADN-VLSI/adn_common/blob/main/document/assertion/adn_common_valid_ready_checker.md)
 [`https://github.com/ADN-VLSI/adn_common/blob/main/document/assertion/dummy_checker.md)
 
 ## INTERFACE
 [`adn_uart_if`](document/interface/adn_uart_if.md)
 
-[`https://github.com/ADN-VLSI/adn_common/blob/main/document/interface/adn_PMI.md)
 [`dummy_interface`](https://github.com/ADN-VLSI/adn_common/blob/main/document/interface/dummy_interface.md)
 
 ## INCLUDE
