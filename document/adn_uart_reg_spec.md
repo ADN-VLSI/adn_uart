@@ -1,14 +1,3 @@
-### Design Philosophy
-
-| Design Decision                         | Rationale                                                                                                                               |
-| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| **Multi-master arbitration**            | Eliminates need for atomic test-and-set or mutexes in software when multiple CPUs share one UART for debug/logging.                     |
-| **Separate peek vs. consume registers** | Allows a master to verify it holds the grant before acting, preventing accidental consumption due to speculative reads or debug probes. |
-| **Level-sensitive interrupts**          | Reduces interrupt storm risk; edge detection is handled by the interrupt controller.                                                    |
-| **Deep FIFOs**                          | Minimizes CPU intervention; typical depth supports 1024 entries (10-bit count fields in STAT).                                          |
-
----
-
 ## Register Map Summary
 
 All offsets are relative to the UART base address (`UART_BASE`). **All registers must be accessed as 32-bit words.** Byte and half-word accesses are supported only where the APB byte-enable strobes (`PSTRB`) correctly target the active byte lanes.
@@ -42,29 +31,6 @@ All offsets are relative to the UART base address (`UART_BASE`). **All registers
 
 Controls global UART behavior including software reset, FIFO flush, and datapath enable.
 
-#### Bit-Field Layout
-
-```
- 31      24 23      16 15       8 7        0
-├──────────┼──────────┼──────────┼──────────┤
-│ Reserved │ Reserved │ Reserved │  EN/FL   │
-│   RAZ    │   RAZ    │   RAZ    │   R/W    │
-└──────────┴──────────┴──────────┴──────────┘
-
-Bit Map:
- 31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
-  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-
- 15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0
-  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-                                   │  │  │  │  │
-                                   │  │  │  │  └── [0] UART Software Reset (0 = Run, 1 = Reset)
-                                   │  │  │  └───── [1] TX FIFO Flush (0 = Normal, 1 = Flush TX FIFO)
-                                   │  │  └──────── [2] RX FIFO Flush (0 = Normal, 1 = Flush RX FIFO)
-                                   │  └─────────── [3] TX_EN (0 = Disable, 1 = Enable)
-                                   └────────────── [4] RX_EN (0 = Disable, 1 = Enable)
-```
-
 #### Detailed Bit Definitions
 
 | Bit(s) | Field           | Reset | Access | Description                                                                                                                                                                                                                                             |
@@ -86,30 +52,6 @@ Bit Map:
 
 Configures baud-rate generation and asynchronous serial frame format.
 
-#### Bit-Field Layout
-
-```
- 31      24 23      16 15       8 7        0
-├──────────┼──────────┼──────────┼──────────┤
-│ Reserved │  FRAME   │  PRE/    │  DIV     │
-│   RAZ    │  CFG     │  PSC     │          │
-└──────────┴──────────┴──────────┴──────────┘
-
-Full bit map:
- 31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
-  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  1
-                                   │  │  │  │  │
-                                   │  │  │  └──┴── [17:16] Data Bits (00=5, 01=6, 10=7, 11=8)
-                                   │  └──┴──────── [19:18] Parity (00=Disabled, 01=Even, 11=Odd)
-                                   └────────────── [20] Stop Bits (0=1 stop, 1=2 stops)
-
- 15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0
-  0  1  0  0  0  0  0  0  0  1  0  1  1  0  1  1
-  │  │  │  │  │  │  │  │  │  │  │  │  │  │  │  │
-  │  │  │  │  └──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴── [11:0] Clock Divider = 0x05B
-  └──┴──┴──┴────────────────────────────────────── [15:12] Prescaler = 0x4
-```
-
 #### Detailed Bit Definitions
 
 | Bit(s)  | Field         | Reset          | Description                                                                                                                   |
@@ -122,22 +64,6 @@ Full bit map:
 | `20`    | `STOP_BITS`   | `0`            | **Stop Bits.** `0` = 1 stop bit; `1` = 2 stop bits.                                                                           |
 | `31:21` | —             | `0x0`          | **Reserved.** Read as zero; writes ignored.                                                                                   |
 
-#### Baud Rate Formula
-
-```
-                    UART_CLK_Hz
-Baud Rate = ─────────────────────────────
-            (PRESCALER + 1) × (CLK_DIV + 1)
-```
-
-**Example:** With `UART_CLK = 50 MHz`, `PRESCALER = 4`, `CLK_DIV = 91`:
-
-```
-            50,000,000
-Baud Rate = ──────────── = 50,000,000 / (5 × 92) ≈ 108,696 baud
-              5 × 92
-```
-
 ---
 
 ### UART_STAT — Status Register
@@ -147,16 +73,6 @@ Baud Rate = ──────────── = 50,000,000 / (5 × 92) ≈ 10
 **Reset:** `0x0050_0000`
 
 Provides real-time visibility into FIFO state. All fields are updated by hardware and reflect the state sampled at the `PCLK` rising edge of the read transaction.
-
-#### Bit-Field Layout
-
-```
- 31      24 23 22 21 20 19      10 9        0
-├──────────┼──┼──┼──┼──┼──────────┼──────────┤
-│ Reserved │FF│FE│FF│FE│ RX_CNT   │ TX_CNT   │
-│   RAZ    │  │  │  │  │          │          │
-└──────────┴──┴──┴──┴──┴──────────┴──────────┘
-```
 
 #### Detailed Bit Definitions
 
@@ -191,35 +107,11 @@ Provides real-time visibility into FIFO state. All fields are updated by hardwar
 
 Enqueues a master ID into the TX arbitration request FIFO. The hardware preserves request order (FIFO discipline).
 
-#### Bit-Field Layout
-
-```
- 31 30      8 7        0
-├──┼──────────┼──────────┤
-│V │ Reserved │ MASTER_ID│
-│  │   WI     │          │
-└──┴──────────┴──────────┘
-```
-
 | Bit(s) | Field              | Description                                                                                                                                                |
 | ------ | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `7:0`  | `TX_ACCESS_REQ_ID` | **Master ID.** Unique identifier of the bus master requesting TX access. Typical assignment: `0x00` = reserved/invalid, `0x01` = CPU0, `0x02` = CPU1, etc. |
 | `30:8` | —                  | **Reserved.** Writes ignored.                                                                                                                              |
 | `31`   | `VALID`            | **Request Valid.** Must be `1` for the write to be accepted into the request FIFO. If `0`, the write is discarded.                                         |
-
-#### Behavior
-
-```
-Software Action                          Hardware Response
-─────────────────────────────────────────────────────────────────
-Write {VALID=1, ID=0x01} to UART_TXR  →  Enqueue 0x01 into TX_REQ_FIFO
-                                          If FIFO full: write silently dropped
-                                          (no bus error, no interrupt)
-```
-
-> **Warning:** A master should enqueue itself **only once** per transaction burst. Repeated writes with the same ID will create multiple queue entries, causing that master to be granted multiple sequential turns.
-
----
 
 ### UART_TXGP — TX Access Grant ID Peek
 
@@ -228,24 +120,6 @@ Write {VALID=1, ID=0x01} to UART_TXR  →  Enqueue 0x01 into TX_REQ_FIFO
 **Reset:** `0x0000_0000`
 
 Provides a **non-consuming** view of the current TX grant. Reading this register does **not** advance the arbitration state machine.
-
-#### Bit-Field Layout
-
-```
- 31 30      8 7        0
-├──┼──────────┼──────────┤
-│V │ Reserved │ GRANT_ID │
-│  │   RAZ    │          │
-└──┴──────────┴──────────┘
-```
-
-| Bit(s) | Field              | Reset      | Description                                                                                                  |
-| ------ | ------------------ | ---------- | ------------------------------------------------------------------------------------------------------------ |
-| `7:0`  | `TX_GRANT_ID_PEEK` | `0x00`     | **Current Granted Master ID.** Reflects the ID at the head of the TX grant FIFO.                             |
-| `30:8` | —                  | `0x000000` | **Reserved.** Read as zero.                                                                                  |
-| `31`   | `VALID`            | `0`        | **Grant Valid.** `1` = a valid grant exists at the head of the queue; `0` = no pending grants (queue empty). |
-
----
 
 ### UART_TXG — TX Access Grant ID
 
@@ -278,14 +152,6 @@ Identical to `UART_TXGP`:
 The data port for the transmit FIFO. Writes are accepted only if the TX FIFO is not full.
 
 #### Bit-Field Layout
-
-```
- 31        8 7        0
-├───────────┼──────────┤
-│ Reserved  │ TX_DATA  │
-│    WI     │          │
-└───────────┴──────────┘
-```
 
 | Bit(s) | Field     | Description                                                                                       |
 | ------ | --------- | ------------------------------------------------------------------------------------------------- |
@@ -378,14 +244,6 @@ Interrupt enable mask. Writing `1` to a bit enables the corresponding interrupt 
 
 #### Bit-Field Layout
 
-```
- 31        4 3  2  1  0
-├───────────┼──┼──┼──┼──┤
-│ Reserved  │RF│RE│TF│TE│
-│   RAZ/WI  │  │  │  │  │
-└───────────┴──┴──┴──┴──┘
-```
-
 | Bit    | Field                  | Reset | Interrupt Source | Description                                                                                                                                                  |
 | ------ | ---------------------- | ----- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `0`    | `TX_FIFO_EMPTY_INT_EN` | `0`   | TX FIFO Empty    | Asserted when the TX FIFO transitions from **non-empty** to **empty**. Useful for triggering a refill when the transmitter has drained all pending data.     |
@@ -393,94 +251,6 @@ Interrupt enable mask. Writing `1` to a bit enables the corresponding interrupt 
 | `2`    | `RX_FIFO_EMPTY_INT_EN` | `0`   | RX FIFO Empty    | Asserted when the RX FIFO transitions from **non-empty** to **empty**. Indicates the software reader has caught up to the hardware.                          |
 | `3`    | `RX_FIFO_FULL_INT_EN`  | `0`   | RX FIFO Full     | Asserted when the RX FIFO transitions from **non-full** to **full**. **Critical:** Indicates imminent data loss unless software drains the FIFO immediately. |
 | `31:4` | —                      | `0x0` | —                | Reserved. Read as zero; writes ignored.                                                                                                                      |
-
----
-
-## Multi-Master Arbitration Protocol
-
-### Conceptual Model
-
-The arbitration mechanism implements a **hardware ticket queue** for each datapath (TX and RX). This eliminates the need for:
-
-- Spinlocks or mutexes in software
-- Atomic read-modify-write instructions
-- Bus-level locking (e.g., AHB LOCK)
-
-```
-        Master A (ID=0x01)              Master B (ID=0x02)
-              │                              │
-              ▼                              ▼
-        ┌───────────┐                  ┌───────────┐
-        │ Write     │                  │ Write     │
-        │ 0x80000001│                  │ 0x80000002│
-        │ to TXR    │                  │ to TXR    │
-        └────┬──────┘                  └────┬──────┘
-             │                              │
-             └────────────┬─────────────────┘
-                          ▼
-                   ┌──────────────┐
-                   │ TX_REQ_FIFO  │
-                   │  [0x01, 0x02]│
-                   └──────┬───────┘
-                          │
-                   ┌──────▼───────┐
-                   │ Grant Logic  │
-                   │  Head = 0x01 │
-                   └──────┬───────┘
-                          │
-              ┌───────────┴───────────┐
-              ▼                       ▼
-        UART_TXGP =           UART_TXGP =
-        0x80000001            0x80000001
-        (Master A sees        (Master B sees
-         its ID, acts)        not its ID, polls)
-```
-
-### TX Arbitration State Machine
-
-```
-┌─────────────┐     Write to UART_TXR    ┌─────────────┐
-│   IDLE      │ ───────────────────────► │  REQUESTED  │
-│ (no queue)  │    VALID=1, ID enqueued  │ (in queue)  │
-└─────────────┘                          └──────┬──────┘
-                                                │
-                                                │ Head of queue reached
-                                                ▼
-                                         ┌─────────────┐
-                                         │   GRANTED   │
-                                         │ (TXGP match)│
-                                         └──────┬──────┘
-                                                │
-                                                │ Write to UART_TXD
-                                                │ Read UART_TXG
-                                                ▼
-                                         ┌─────────────────┐
-                                         │  COMPLETE       │
-                                         │ (grant consumed)│
-                                         └─────────────────┘
-```
-
-### Arbitration Fairness & Deadlock Considerations
-
-| Scenario                                  | Behavior                                                                                                                                                                                       |
-| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Same ID enqueued twice**                | The master gets two back-to-back grants. This is legal but usually a software bug.                                                                                                             |
-| **Master requests but never consumes**    | The queue stalls at that master. All subsequent masters wait indefinitely. **Always consume your grant.**                                                                                      |
-| **Master consumes without holding grant** | If the queue is empty, `VALID=0` is returned. If the queue is non-empty, the head grant is consumed regardless of who reads it. **Do not read `TXG`/`RXG` unless you verified `TXGP`/`RXGP`.** |
-| **Debug probe reads `TXG`**               | A debugger performing a memory dump that touches `0x018` will **consume** the active grant, breaking the protocol. Mask `0x018` from debug scans.                                              |
-
----
-
-## Interrupt Handling
-
-### Recommended Interrupt Strategy
-
-| Use Case              | Enabled Interrupts | Handler Action                                                       |
-| --------------------- | ------------------ | -------------------------------------------------------------------- |
-| **TX streaming**      | `TX_FIFO_EMPTY`    | Refill FIFO from memory buffer; consume grant when buffer exhausted. |
-| **RX streaming**      | `RX_FIFO_FULL`     | Emergency drain to prevent overrun; schedule deferred processing.    |
-| **Low-power polling** | `RX_FIFO_EMPTY`    | Wake CPU when RX FIFO drains completely (end of packet).             |
-| **Backpressure**      | `TX_FIFO_FULL`     | Stop DMA/channel until FIFO has room.                                |
 
 ---
 
