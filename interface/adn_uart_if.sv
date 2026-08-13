@@ -1,13 +1,15 @@
-interface uart_if;
+interface adn_uart_if;
 
   /////////////////////////////////////////////////////////
   // SIGNALS
   /////////////////////////////////////////////////////////
 
-  tri1 line;
+  tri1 tx;
   logic tx_driver;
 
-  assign line = tx_driver;
+  assign tx = tx_driver;
+
+  tri1 rx;
 
   /////////////////////////////////////////////////////////
   // CONFIGURATION
@@ -42,9 +44,9 @@ interface uart_if;
     parity = 0;
     for (i = 0; i < DATA_BITS; i++) begin
         parity = parity ^ data[i];
+    end
     if (PARITY_TYPE)                    // ODD parity
         parity = ~parity;
-    end
 
     // IDLE
     tx_driver = 1'b1;        
@@ -97,20 +99,20 @@ interface uart_if;
     parity = 0;
 
     // Wait for start bit
-    @(negedge tx_driver);
+    @(negedge rx);
 
     // Move to center of first data bit
     #(BITS_TIME + BITS_TIME / 2);
 
     // Receive data bits (LSB First)
     for (i = 0; i < DATA_BITS; i++) begin
-        data[i] = tx_driver;
+        data[i] = rx;
         #BITS_TIME;
     end
 
     // Receive Parity
     if (PARITY_EN) begin
-        parity = tx_driver;
+        parity = rx;
         #BITS_TIME;
     end
 

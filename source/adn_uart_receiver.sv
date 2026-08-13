@@ -159,11 +159,11 @@ module adn_uart_receiver #(
   );
 
   // Generate expected parity for validation
-  adn_parity_generator #(
+  adn_common_parity_generator #(
       .DATA_WIDTH(8)
   ) u_parity_gen (
       .data_i       (aligned_data),
-      .valid_bits_i (active_bit_count),
+      .num_bits_i   (active_bit_count),
       .parity_type_i(parity_type_i),
       .parity_o     (expected_parity)
   );
