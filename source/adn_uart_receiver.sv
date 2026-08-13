@@ -19,7 +19,7 @@ See LICENSE file in the project root for full license information
 
 */
 module adn_uart_receiver #(
-    parameter int OVERSAMPLE = 8 // Number of samples per bit period
+    parameter int OVERSAMPLE = 8  // Number of samples per bit period
 ) (
     input logic arst_ni,  // Asynchronous reset, active low
     input logic clk_i,    // System clock input
@@ -38,7 +38,7 @@ module adn_uart_receiver #(
   // LOCALPARAMS GENERATED
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
-  localparam int HALF_OVERSAMPLE = (OVERSAMPLE / 2) - 1; // Midpoint for bit sampling
+  localparam int HalfOversample = (OVERSAMPLE / 2) - 1;  // Midpoint for bit sampling
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   // TYPEDEFS
@@ -52,31 +52,29 @@ module adn_uart_receiver #(
     STATE_STOP
   } state_e;
 
-  state_e current_state, next_state; // FSM state registers
+  state_e current_state, next_state;  // FSM state registers
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   // SIGNALS
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
   logic                          rx_s;  // Synchronized RX signal
-
-  logic [$clog2(OVERSAMPLE)-1:0] sample_cnt; // Counter for oversampling ticks
-  logic [                   2:0] bit_cnt;    // Tracks number of bits received
-  logic [                   2:0] target_bit_cnt; // Configured bit count target
-  logic [                   3:0] active_bit_count; // Number of bits for parity calc
-
-  logic [                   7:0] rx_shift_reg; // Shift register for incoming bits
-  logic [                   7:0] aligned_data; // Data shifted to LSB alignment
-  logic                          rx_parity_bit; // Captured parity bit
-  logic                          expected_parity; // Parity calculated from received data
-  logic                          parity_err; // Flag for parity mismatch
+  logic [$clog2(OVERSAMPLE)-1:0] sample_cnt;  // Counter for oversampling ticks
+  logic [                   3:0] bit_cnt;  // Tracks number of bits received
+  logic [                   3:0] target_bit_cnt;  // Configured bit count target
+  logic [                   3:0] active_bit_count;  // Number of bits for parity calc
+  logic [                   7:0] rx_shift_reg;  // Shift register for incoming bits
+  logic [                   7:0] aligned_data;  // Data shifted to LSB alignment
+  logic                          rx_parity_bit;  // Captured parity bit
+  logic                          expected_parity;  // Parity calculated from received data
+  logic                          parity_err;  // Flag for parity mismatch
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   // ASSIGNMENTS
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // Convert config input to target bit count (5 to 8 bits)
-  always_comb target_bit_cnt = 3'd5 + {1'b0, data_bits_i};
+  // FIX: Sized literal changed to 4 bits to match the updated vector width
+  always_comb target_bit_cnt = 4'd5 + {2'b0, data_bits_i};
   always_comb active_bit_count = 4'd5 + {2'b0, data_bits_i};
 
   // Align raw right-shifted LSB-first data into zero-padded LSB positions
@@ -104,7 +102,7 @@ module adn_uart_receiver #(
       end
 
       STATE_START: begin
-        if (sample_cnt == HALF_OVERSAMPLE) begin
+        if (sample_cnt == HalfOversample) begin
           if (!rx_s) begin
             next_state = STATE_DATA;
           end else begin
@@ -201,7 +199,7 @@ module adn_uart_receiver #(
         end
 
         STATE_START: begin
-          if (sample_cnt == HALF_OVERSAMPLE) begin
+          if (sample_cnt == HalfOversample) begin
             sample_cnt <= '0;  // Re-align sampling phase to bit center
           end else begin
             sample_cnt <= sample_cnt + 1'b1;
@@ -217,7 +215,7 @@ module adn_uart_receiver #(
           end
 
           // Sample data bit at midpoint
-          if (sample_cnt == HALF_OVERSAMPLE) begin
+          if (sample_cnt == HalfOversample) begin
             rx_shift_reg <= {rx_s, rx_shift_reg[7:1]};
           end
         end
@@ -230,7 +228,7 @@ module adn_uart_receiver #(
           end
 
           // Sample parity bit at midpoint
-          if (sample_cnt == HALF_OVERSAMPLE) begin
+          if (sample_cnt == HalfOversample) begin
             rx_parity_bit <= rx_s;
           end
         end
