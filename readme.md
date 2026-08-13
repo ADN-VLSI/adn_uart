@@ -38,7 +38,7 @@
 [`adn_common_valid_ready_checker`](https://github.com/ADN-VLSI/adn_common/blob/main/document/assertion/adn_common_valid_ready_checker.md)
 
 ## INTERFACE
-[`document/interface/uart_if.md)
+[`adn_uart_if`](document/interface/adn_uart_if.md)
 
 [`adn_PMI`](https://github.com/ADN-VLSI/adn_common/blob/main/document/interface/adn_PMI.md)
 [`dummy_interface`](https://github.com/ADN-VLSI/adn_common/blob/main/document/interface/dummy_interface.md)
