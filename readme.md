@@ -2,6 +2,7 @@
 
 ## SOURCE
 [`adn_uart_receiver`](document/source/adn_uart_receiver.md)
+[`adn_uart_register_interface`](document/source/adn_uart_register_interface.md)
 [`adn_uart_transmitter`](document/source/adn_uart_transmitter.md)
 [`dummy_rtl`](document/source/dummy_rtl.md)
 
