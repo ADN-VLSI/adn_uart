@@ -134,13 +134,8 @@ module adn_uart_register_interface #(
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
   // Fixed APB responses for RAZ/WI (Read-As-Zero / Write-Ignored) architecture
-  // The interface handles transactions in exactly 1 cycle without errors.
   always_comb reg_ready = 1'b1;
   always_comb reg_error = 1'b0;
-
-  // -----------------------------------------------------------------------
-  // Single-Cycle Pulsed Combinational Outputs (Queues & FIFOs)
-  // -----------------------------------------------------------------------
 
   // TX Request Enqueue: Triggered when writing to UART_TXR and MSB (valid bit) is 1
   always_comb tx_req_valid = reg_write_en && (reg_addr[11:0] == AddrUartTxr) && reg_wdata[31];
@@ -253,7 +248,6 @@ module adn_uart_register_interface #(
       rx_fifo_full_int_en  <= 1'b0;
     end else begin
       // Auto-clearing mechanism for FIFO flushes:
-      // They behave as 1-cycle pulses into the datapath.
       if (tx_fifo_flush) tx_fifo_flush <= 1'b0;
       if (rx_fifo_flush) rx_fifo_flush <= 1'b0;
 
