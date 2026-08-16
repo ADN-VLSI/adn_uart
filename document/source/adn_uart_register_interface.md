@@ -28,48 +28,48 @@
 |-|-|-|-|-|
 |clk|input|logic||System clock|
 |rst_n|input|logic||Active-low asynchronous reset|
-|reg_addr|input|logic [ADDR_WIDTH-1:0]||Register address input|
-|reg_wdata|input|logic [DATA_WIDTH-1:0]||Write data input|
-|reg_write_en|input|logic||Write enable signal|
-|reg_read_en|input|logic||Read enable signal|
-|reg_rdata|output|logic [DATA_WIDTH-1:0]||Read data output|
-|reg_ready|output|logic||Bus ready signal|
-|reg_error|output|logic||Bus error signal|
-|uart_sw_rst|output|logic||Software reset trigger|
-|tx_fifo_flush|output|logic||Flush TX FIFO|
-|rx_fifo_flush|output|logic||Flush RX FIFO|
-|tx_en|output|logic||Transmitter enable|
-|rx_en|output|logic||Receiver enable|
-|clk_div|output|logic [11:0]||Clock divider value|
-|prescaler|output|logic [ 3:0]||Prescaler value|
-|data_bits|output|logic [ 1:0]||Data bits configuration|
-|parity_en|output|logic||Parity enable|
-|parity_type|output|logic||Parity type selection|
-|stop_bits|output|logic||Stop bits configuration|
-|tx_data_cnt|input|logic [9:0]||TX FIFO data count|
-|rx_data_cnt|input|logic [9:0]||RX FIFO data count|
-|tx_fifo_empty|input|logic||TX FIFO empty status|
-|tx_fifo_full|input|logic||TX FIFO full status|
-|rx_fifo_empty|input|logic||RX FIFO empty status|
-|rx_fifo_full|input|logic||RX FIFO full status|
-|tx_fifo_wdata|output|logic [7:0]||Data to write to TX FIFO|
-|tx_fifo_push|output|logic||Push data to TX FIFO|
-|rx_fifo_rdata|input|logic [7:0]||Data read from RX FIFO|
-|rx_fifo_pop|output|logic||Pop data from RX FIFO|
-|tx_access_req_id|output|logic [7:0]||TX request ID|
-|tx_req_valid|output|logic||TX request valid|
-|tx_grant_id|input|logic [7:0]||TX grant ID|
-|tx_grant_valid|input|logic||TX grant valid|
-|tx_grant_pop|output|logic||Pop TX grant|
-|rx_access_req_id|output|logic [7:0]||RX request ID|
-|rx_req_valid|output|logic||RX request valid|
-|rx_grant_id|input|logic [7:0]||RX grant ID|
-|rx_grant_valid|input|logic||RX grant valid|
-|rx_grant_pop|output|logic||Pop RX grant|
-|tx_fifo_empty_int_en|output|logic||TX empty interrupt enable|
-|tx_fifo_full_int_en|output|logic||TX full interrupt enable|
-|rx_fifo_empty_int_en|output|logic||RX empty interrupt enable|
-|rx_fifo_full_int_en|output|logic||RX full interrupt enable|
+|reg_addr|input|logic [ADDR_WIDTH-1:0]||Internal Bus Interface|
+|reg_wdata|input|logic [DATA_WIDTH-1:0]|||
+|reg_write_en|input|logic|||
+|reg_read_en|input|logic|||
+|reg_rdata|output|logic [DATA_WIDTH-1:0]|||
+|reg_ready|output|logic|||
+|reg_error|output|logic|||
+|uart_sw_rst|output|logic||Hardware Control Outputs (UART_CTRL)|
+|tx_fifo_flush|output|logic|||
+|rx_fifo_flush|output|logic|||
+|tx_en|output|logic|||
+|rx_en|output|logic|||
+|clk_div|output|logic [11:0]||Hardware Configuration Outputs (UART_CFG)|
+|prescaler|output|logic [ 3:0]|||
+|data_bits|output|logic [ 1:0]|||
+|parity_en|output|logic|||
+|parity_type|output|logic|||
+|stop_bits|output|logic|||
+|tx_data_cnt|input|logic [9:0]||Status Inputs (UART_STAT)|
+|rx_data_cnt|input|logic [9:0]|||
+|tx_fifo_empty|input|logic|||
+|tx_fifo_full|input|logic|||
+|rx_fifo_empty|input|logic|||
+|rx_fifo_full|input|logic|||
+|tx_fifo_wdata|output|logic [7:0]||TX Datapath (UART_TXD)|
+|tx_fifo_push|output|logic|||
+|rx_fifo_rdata|input|logic [7:0]||RX Datapath (UART_RXD)|
+|rx_fifo_pop|output|logic|||
+|tx_access_req_id|output|logic [7:0]||TX Arbitration (UART_TXR, UART_TXGP, UART_TXG)|
+|tx_req_valid|output|logic|||
+|tx_grant_id|input|logic [7:0]|||
+|tx_grant_valid|input|logic|||
+|tx_grant_pop|output|logic|||
+|rx_access_req_id|output|logic [7:0]||RX Arbitration (UART_RXR, UART_RXGP, UART_RXG)|
+|rx_req_valid|output|logic|||
+|rx_grant_id|input|logic [7:0]|||
+|rx_grant_valid|input|logic|||
+|rx_grant_pop|output|logic|||
+|tx_fifo_empty_int_en|output|logic||Interrupts (UART_INT)|
+|tx_fifo_full_int_en|output|logic|||
+|rx_fifo_empty_int_en|output|logic|||
+|rx_fifo_full_int_en|output|logic|||
 
 
 ## Description
