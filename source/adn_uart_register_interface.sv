@@ -1,8 +1,14 @@
 /*
 
-@foez-bhai, write the purpose of this module in markdown format here. This is already in multi-line comment, so don't add any additional comment syntax.
+The `adn_uart_register_interface` module serves as the primary bridge between a system-level bus interface (such as APB) and the internal UART hardware components. It maps control, configuration, status, and data registers to specific memory addresses, enabling software to manage UART operations, monitor FIFO status, handle arbitration requests, and configure communication parameters like clock division and parity.
 
-@foez-bhai, describe the use case of this module in markdown format here. This is already in multi-line comment, so don't add any additional comment syntax.
+### Use Case
+The `adn_uart_register_interface` acts as the memory-mapped control layer for the UART peripheral. Its primary use cases include:
+- **Configuration:** Allowing software to set baud rates (via clock division/prescalers) and frame formats (data bits, parity, stop bits).
+- **Control:** Providing a mechanism to trigger software resets, flush FIFOs, and enable/disable the transmitter and receiver.
+- **Data Transfer:** Facilitating the movement of data between the system bus and the TX/RX FIFOs.
+- **Status Monitoring:** Exposing real-time FIFO occupancy and status flags to the CPU.
+- **Arbitration:** Managing request/grant handshakes for multi-master or multi-client UART access scenarios.
 
 | REVISION | DATE       | AUTHOR              | DESCRIPTION                                            |
 |----------|------------|---------------------|--------------------------------------------------------|
@@ -17,97 +23,96 @@ See LICENSE file in the project root for full license information
 
 */
 
-// @foez-bhai, add comments to the parameters, ports
 module adn_uart_register_interface #(
-    parameter int ADDR_WIDTH = 32,
-    parameter int DATA_WIDTH = 32,
+    parameter int ADDR_WIDTH = 32, // Width of the register address bus
+    parameter int DATA_WIDTH = 32, // Width of the register data bus
 
     // Default UART Configuration Reset Values
-    parameter logic [11:0] RST_CLK_DIV   = 12'h05B,
-    parameter logic [ 3:0] RST_PRESCALER = 4'h4,
-    parameter logic [ 1:0] RST_DATA_BITS = 2'h3,
-    parameter logic        RST_PARITY_EN = 1'b0,
-    parameter logic        RST_PARITY_TY = 1'b0,
-    parameter logic        RST_STOP_BITS = 1'b0
+    parameter logic [11:0] RST_CLK_DIV   = 12'h05B, // Reset value for clock divider
+    parameter logic [ 3:0] RST_PRESCALER = 4'h4,    // Reset value for prescaler
+    parameter logic [ 1:0] RST_DATA_BITS = 2'h3,    // Reset value for data bits configuration
+    parameter logic        RST_PARITY_EN = 1'b0,    // Reset value for parity enable
+    parameter logic        RST_PARITY_TY = 1'b0,    // Reset value for parity type
+    parameter logic        RST_STOP_BITS = 1'b0     // Reset value for stop bits configuration
 ) (
     // Global Signals
-    input logic clk,
-    input logic rst_n,
+    input logic clk,   // System clock
+    input logic rst_n, // Active-low asynchronous reset
 
     // =====================================================================
     // Internal Bus Interface (Translated from APB)
     // =====================================================================
-    input  logic [ADDR_WIDTH-1:0] reg_addr,
-    input  logic [DATA_WIDTH-1:0] reg_wdata,
-    input  logic                  reg_write_en,
-    input  logic                  reg_read_en,
-    output logic [DATA_WIDTH-1:0] reg_rdata,
-    output logic                  reg_ready,
-    output logic                  reg_error,
+    input  logic [ADDR_WIDTH-1:0] reg_addr,     // Register address input
+    input  logic [DATA_WIDTH-1:0] reg_wdata,    // Write data input
+    input  logic                  reg_write_en, // Write enable signal
+    input  logic                  reg_read_en,  // Read enable signal
+    output logic [DATA_WIDTH-1:0] reg_rdata,    // Read data output
+    output logic                  reg_ready,    // Bus ready signal
+    output logic                  reg_error,    // Bus error signal
 
     // =====================================================================
     // Hardware Control Outputs (UART_CTRL & UART_CFG)
     // =====================================================================
-    output logic uart_sw_rst,
-    output logic tx_fifo_flush,
-    output logic rx_fifo_flush,
-    output logic tx_en,
-    output logic rx_en,
+    output logic uart_sw_rst,   // Software reset trigger
+    output logic tx_fifo_flush, // Flush TX FIFO
+    output logic rx_fifo_flush, // Flush RX FIFO
+    output logic tx_en,         // Transmitter enable
+    output logic rx_en,         // Receiver enable
 
-    output logic [11:0] clk_div,
-    output logic [ 3:0] prescaler,
-    output logic [ 1:0] data_bits,
-    output logic        parity_en,
-    output logic        parity_type,
-    output logic        stop_bits,
+    output logic [11:0] clk_div,     // Clock divider value
+    output logic [ 3:0] prescaler,   // Prescaler value
+    output logic [ 1:0] data_bits,   // Data bits configuration
+    output logic        parity_en,   // Parity enable
+    output logic        parity_type, // Parity type selection
+    output logic        stop_bits,   // Stop bits configuration
 
     // =====================================================================
     // Status Inputs (UART_STAT)
     // =====================================================================
-    input logic [9:0] tx_data_cnt,
-    input logic [9:0] rx_data_cnt,
-    input logic       tx_fifo_empty,
-    input logic       tx_fifo_full,
-    input logic       rx_fifo_empty,
-    input logic       rx_fifo_full,
+    input logic [9:0] tx_data_cnt,   // TX FIFO data count
+    input logic [9:0] rx_data_cnt,   // RX FIFO data count
+    input logic       tx_fifo_empty, // TX FIFO empty status
+    input logic       tx_fifo_full,  // TX FIFO full status
+    input logic       rx_fifo_empty, // RX FIFO empty status
+    input logic       rx_fifo_full,  // RX FIFO full status
 
     // =====================================================================
     // TX Datapath (UART_TXD)
     // =====================================================================
-    output logic [7:0] tx_fifo_wdata,
-    output logic       tx_fifo_push,
+    output logic [7:0] tx_fifo_wdata, // Data to write to TX FIFO
+    output logic       tx_fifo_push,  // Push data to TX FIFO
 
     // =====================================================================
     // RX Datapath (UART_RXD)
     // =====================================================================
-    input  logic [7:0] rx_fifo_rdata,
-    output logic       rx_fifo_pop,
+    input  logic [7:0] rx_fifo_rdata, // Data read from RX FIFO
+    output logic       rx_fifo_pop,   // Pop data from RX FIFO
 
     // =====================================================================
     // TX Arbitration (UART_TXR, UART_TXGP, UART_TXG)
     // =====================================================================
-    output logic [7:0] tx_access_req_id,
-    output logic       tx_req_valid,
-    input  logic [7:0] tx_grant_id,
-    input  logic       tx_grant_valid,
-    output logic       tx_grant_pop,
+    output logic [7:0] tx_access_req_id, // TX request ID
+    output logic       tx_req_valid,     // TX request valid
+    input  logic [7:0] tx_grant_id,      // TX grant ID
+    input  logic       tx_grant_valid,   // TX grant valid
+    output logic       tx_grant_pop,     // Pop TX grant
 
     // =====================================================================
     // RX Arbitration (UART_RXR, UART_RXGP, UART_RXG)
     // =====================================================================
-    output logic [7:0] rx_access_req_id,
-    output logic       rx_req_valid,
-    input  logic [7:0] rx_grant_id,
-    input  logic       rx_grant_valid,
-    output logic       rx_grant_pop,
+    output logic [7:0] rx_access_req_id, // RX request ID
+    output logic       rx_req_valid,     // RX request valid
+    input  logic [7:0] rx_grant_id,      // RX grant ID
+    input  logic       rx_grant_valid,   // RX grant valid
+    output logic       rx_grant_pop,     // Pop RX grant
 
     // =====================================================================
     // Interrupts (UART_INT)
     // =====================================================================
-    output logic tx_fifo_empty_int_en,
-    output logic tx_fifo_full_int_en,
-    output logic rx_fifo_empty_int_en,
-    output logic rx_fifo_full_int_en
+    output logic tx_fifo_empty_int_en, // TX empty interrupt enable
+    output logic tx_fifo_full_int_en,  // TX full interrupt enable
+    output logic rx_fifo_empty_int_en, // RX empty interrupt enable
+    output logic rx_fifo_full_int_en  // RX full interrupt enable
 );
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
