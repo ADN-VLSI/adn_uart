@@ -34,9 +34,7 @@ module adn_uart_register_interface #(
     input logic clk,
     input logic rst_n,
 
-    // =====================================================================
-    // Internal Bus Interface (Translated from APB)
-    // =====================================================================
+    // Internal Bus Interface
     input  logic [ADDR_WIDTH-1:0] reg_addr,
     input  logic [DATA_WIDTH-1:0] reg_wdata,
     input  logic                  reg_write_en,
@@ -45,15 +43,14 @@ module adn_uart_register_interface #(
     output logic                  reg_ready,
     output logic                  reg_error,
 
-    // =====================================================================
-    // Hardware Control Outputs (UART_CTRL & UART_CFG)
-    // =====================================================================
+    // Hardware Control Outputs (UART_CTRL)
     output logic uart_sw_rst,
     output logic tx_fifo_flush,
     output logic rx_fifo_flush,
     output logic tx_en,
     output logic rx_en,
 
+    // Hardware Configuration Outputs (UART_CFG)
     output logic [11:0] clk_div,
     output logic [ 3:0] prescaler,
     output logic [ 1:0] data_bits,
@@ -61,9 +58,7 @@ module adn_uart_register_interface #(
     output logic        parity_type,
     output logic        stop_bits,
 
-    // =====================================================================
     // Status Inputs (UART_STAT)
-    // =====================================================================
     input logic [9:0] tx_data_cnt,
     input logic [9:0] rx_data_cnt,
     input logic       tx_fifo_empty,
@@ -71,39 +66,29 @@ module adn_uart_register_interface #(
     input logic       rx_fifo_empty,
     input logic       rx_fifo_full,
 
-    // =====================================================================
     // TX Datapath (UART_TXD)
-    // =====================================================================
     output logic [7:0] tx_fifo_wdata,
     output logic       tx_fifo_push,
 
-    // =====================================================================
     // RX Datapath (UART_RXD)
-    // =====================================================================
     input  logic [7:0] rx_fifo_rdata,
     output logic       rx_fifo_pop,
 
-    // =====================================================================
     // TX Arbitration (UART_TXR, UART_TXGP, UART_TXG)
-    // =====================================================================
     output logic [7:0] tx_access_req_id,
     output logic       tx_req_valid,
     input  logic [7:0] tx_grant_id,
     input  logic       tx_grant_valid,
     output logic       tx_grant_pop,
 
-    // =====================================================================
     // RX Arbitration (UART_RXR, UART_RXGP, UART_RXG)
-    // =====================================================================
     output logic [7:0] rx_access_req_id,
     output logic       rx_req_valid,
     input  logic [7:0] rx_grant_id,
     input  logic       rx_grant_valid,
     output logic       rx_grant_pop,
 
-    // =====================================================================
     // Interrupts (UART_INT)
-    // =====================================================================
     output logic tx_fifo_empty_int_en,
     output logic tx_fifo_full_int_en,
     output logic rx_fifo_empty_int_en,
@@ -115,7 +100,6 @@ module adn_uart_register_interface #(
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
   // Register Address Offsets
-  // Assuming 12-bit address decoding for local offsets
   localparam logic [11:0] AddrUartCtrl = 12'h000;
   localparam logic [11:0] AddrUartCfg = 12'h004;
   localparam logic [11:0] AddrUartStat = 12'h008;
@@ -189,19 +173,16 @@ module adn_uart_register_interface #(
         end
 
         AddrUartTxgp, AddrUartTxg: begin
-          // UART_TXGP (Peek) and UART_TXG (Consume) share the same read data layout
           reg_rdata[7:0] = tx_grant_id;
           reg_rdata[31]  = tx_grant_valid;
         end
 
         AddrUartRxgp, AddrUartRxg: begin
-          // UART_RXGP (Peek) and UART_RXG (Consume) share the same read data layout
           reg_rdata[7:0] = rx_grant_id;
           reg_rdata[31]  = rx_grant_valid;
         end
 
         AddrUartRxd: begin
-          // Note: Hardware safety prevents pop if rx_fifo_empty==1. Raw bus data is outputted.
           reg_rdata[7:0] = rx_fifo_rdata;
         end
 
@@ -278,7 +259,7 @@ module adn_uart_register_interface #(
             rx_fifo_full_int_en  <= reg_wdata[3];
           end
 
-          default: ;  // Write Ignored (WI) for Read-Only or Reserved registers
+          default: ;
         endcase
       end
     end
