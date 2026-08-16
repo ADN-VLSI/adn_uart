@@ -166,37 +166,40 @@ interface adn_uart_if;
   // SIGNALS
   /////////////////////////////////////////////////////////
 
-  tri1 line;
-  logic tx_driver;
+  // UART is idle HIGH.
+  // tri1 means the line resolves to 1 when nobody drives it.
+  tri1  line;
 
-  assign line = tx_driver; // What the heck? Lets see how you read line
+  // Testbench-side UART driver
+  logic tx_driver;
+  bit   drive_enable;
+
+  // Drive the line only when enabled.
+  // Otherwise release it (high impedance).
+  assign line = drive_enable ? tx_driver : 1'bz;
 
   /////////////////////////////////////////////////////////
   // CONFIGURATION
   /////////////////////////////////////////////////////////
 
-  int  baud_rate = 9600;  // 19200 115200
-  bit  parity_en = 0;     // 0:disabled 1:enabled
-  bit  parity_type = 0;   // 0:even 1:odd
-  bit  extra_stop = 0;    // 0:disabled 1:enabled
-  int  data_bits = 8;     // 5, 6, 7, 8
+  int baud_rate = 9600;  // 19200 115200
+  bit parity_en = 0;  // 0:disabled 1:enabled
+  bit parity_type = 0;  // 0:even 1:odd
+  bit extra_stop = 0;  // 0:disabled 1:enabled
+  int data_bits = 8;  // 5, 6, 7, 8
 
   /////////////////////////////////////////////////////////
   // METHOD
   /////////////////////////////////////////////////////////
 
-  task automatic send(
-    input int data, 
-    input int BAUD_RATE = baud_rate, 
-    input bit PARITY_EN = parity_en, 
-    input bit PARITY_TYPE = parity_type,     // 0 -> EVEN and 1 -> ODD
-    input bit EXTRA_STOP = extra_stop, 
-    input int DATA_BITS = data_bits
-    );
+  task automatic send(input int data, input int BAUD_RATE = baud_rate,
+                      input bit PARITY_EN = parity_en,
+                      input bit PARITY_TYPE = parity_type,  // 0 -> EVEN and 1 -> ODD
+                      input bit EXTRA_STOP = extra_stop, input int DATA_BITS = data_bits);
 
     time BITS_TIME;
-    bit parity;
-    int i;
+    bit  parity;
+    int  i;
 
     baud_rate = BAUD_RATE;
     parity_en = PARITY_EN;
@@ -209,29 +212,34 @@ interface adn_uart_if;
     // Calculate parity
     parity = 0;
     for (i = 0; i < DATA_BITS; i++) begin
-        parity = parity ^ data[i];
-    if (PARITY_TYPE)                    // ODD parity
-        parity = ~parity;
+      parity = parity ^ data[i];
     end
+    if (PARITY_TYPE)  // ODD parity
+      parity = ~parity;
 
-    // IDLE
-    tx_driver = 1'b1;        
-    #BITS_TIME
+    ///////////////////////////////////////////////////////
+    // Start driving the UART line
+    ///////////////////////////////////////////////////////
+
+    drive_enable = 1;
+    tx_driver    = 1'b1;
 
     // START BIT
-    tx_driver = 1'b0;        
+    tx_driver = 1'b0;
     #BITS_TIME
 
-    // Data bits (LSB first)
-    for(i = 0; i < DATA_BITS; i++) begin
+      // Data bits (LSB first)
+      for (
+          i = 0; i < DATA_BITS; i++
+      ) begin
         tx_driver = data[i];
         #BITS_TIME;
-    end
+      end
 
-    // Parity bit enable or not
+    // Parity bit
     if (PARITY_EN) begin
-        tx_driver = parity;
-        #BITS_TIME;
+      tx_driver = parity;
+      #BITS_TIME;
     end
 
     // Stop bit
@@ -240,24 +248,24 @@ interface adn_uart_if;
 
     // Second stop bit (Optional)
     if (EXTRA_STOP) begin
-        tx_driver = 1'b1;
-        #BITS_TIME;
+      tx_driver = 1'b1;
+      #BITS_TIME;
     end
+
+    ///////////////////////////////////////////////////////
+    // Release the UART line
+    ///////////////////////////////////////////////////////
+
+    drive_enable = 0;
 
   endtask
 
-  task automatic recv(
-    output int data, 
-    output bit parity, 
-    input int BAUD_RATE = baud_rate, 
-    input bit PARITY_EN = parity_en, 
-    input bit PARITY_TYPE = parity_type, 
-    input bit EXTRA_STOP = extra_stop, 
-    input int DATA_BITS = data_bits
-    );
+  task automatic recv(output int data, output bit parity, input int BAUD_RATE = baud_rate,
+                      input bit PARITY_EN = parity_en, input bit PARITY_TYPE = parity_type,
+                      input bit EXTRA_STOP = extra_stop, input int DATA_BITS = data_bits);
 
     time BITS_TIME;
-    int i;
+    int  i;
 
     baud_rate = BAUD_RATE;
     parity_en = PARITY_EN;
@@ -271,30 +279,30 @@ interface adn_uart_if;
     parity = 0;
 
     // Wait for start bit
-    @(negedge tx_driver);
+    @(negedge line);
 
     // Move to center of first data bit
     #(BITS_TIME + BITS_TIME / 2);
 
     // Receive data bits (LSB First)
     for (i = 0; i < DATA_BITS; i++) begin
-        data[i] = tx_driver;
-        #BITS_TIME;
+      data[i] = line;
+      #BITS_TIME;
     end
 
     // Receive Parity
     if (PARITY_EN) begin
-        parity = tx_driver;
-        #BITS_TIME;
+      parity = line;
+      #BITS_TIME;
     end
 
     // Consume stop bit
     #BITS_TIME;
 
     // Consume second stop bit (Optional: if used)
-    if (EXTRA_STOP)
+    if (EXTRA_STOP) 
         #BITS_TIME;
-    
+
   endtask
 
 endinterface
