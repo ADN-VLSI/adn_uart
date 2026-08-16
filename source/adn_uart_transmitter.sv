@@ -194,4 +194,3 @@ module adn_uart_transmitter #(
   end
 
 endmodule
-
