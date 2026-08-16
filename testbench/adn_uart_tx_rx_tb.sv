@@ -1,24 +1,25 @@
 /*
 
-| TEST CASE | DATE | AUTHOR | DESCRIPTION |
-|-----------|------------|-----------------|-------------------------------------------------------|
-| TC_001 | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies UART reset behavior|
-| TC_002 | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies basic UART TX operation using 8-bit|
-| TC_003 | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies basic UART RX operation by receiving an 8-bit UART frame |
-| TC_004 | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies TX-to-RX loopback operation|
-| TC_005 | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies configurable UART data widths of 5, 6, 7 and 8 bits for both TX and RX operation. |
-| TC_006 | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies even-parity operation in both TX and RX paths. |
-| TC_006A | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies even-parity generation and transmission on the TX path|
-| TC_006B | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies even-parity detection and reception on the RX path|
-| TC_007 | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies odd-parity operation in both TX and RX paths. |
-| TC_007A | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies odd-parity generation and transmission on the TX path |
-| TC_007B | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies odd-parity detection and reception on the RX path |
-| TC_008 | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies transmission and reception of a UART frame containing an additional stop bit. |
-| TC_009 | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies transmission and reception of multiple consecutive bytes while maintaining correct byte order and data integrity. |
-| TC_010 | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies RX rejection of a UART frame containing an incorrect parity bit and ensures `rx_valid` is not asserted. |
-| TC_011 | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies RX rejection of a UART frame containing an incorrect stop bit and ensures `rx_valid` is not asserted. |
-| TC_012 | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies TX back-to-back transmission of two consecutive 8-bit frames and checks that both frames are transmitted correctly. |
-| TC_013 | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies RX back-to-back reception of two consecutive 8-bit frames and checks that both bytes are received correctly and in the correct order. |
+| TEST CASE | TEST NAME | DATE | AUTHOR | DESCRIPTION |
+|-----------|-----------|------------|-------------------------|-------------------------------------------------------|
+| TC_001 | `reset` | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies UART reset behavior. |
+| TC_002 | `tx` | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies basic UART TX operation using 8-bit data. |
+| TC_003 | `rx` | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies basic UART RX operation by receiving an 8-bit UART frame. |
+| TC_004 | `loopback` | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies TX-to-RX loopback operation. |
+| TC_005 | `data_width` | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies configurable UART data widths of 5, 6, 7, and 8 bits for both TX and RX operation. |
+| TC_006 | `even_parity` | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies even-parity operation in both TX and RX paths. |
+| TC_006A | `even_parity_tx` | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies even-parity generation and transmission on the TX path. |
+| TC_006B | `even_parity_rx` | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies even-parity detection and reception on the RX path. |
+| TC_007 | `odd_parity` | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies odd-parity operation in both TX and RX paths. |
+| TC_007A | `odd_parity_tx` | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies odd-parity generation and transmission on the TX path. |
+| TC_007B | `odd_parity_rx` | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies odd-parity detection and reception on the RX path. |
+| TC_008 | `extra_stop` | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies transmission and reception of a UART frame containing an additional stop bit. |
+| TC_009 | `multiple_bytes` | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies transmission and reception of multiple consecutive bytes while maintaining correct byte order and data integrity. |
+| TC_010 | `bad_parity` | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies RX rejection of a UART frame containing an incorrect parity bit and ensures `rx_valid` is not asserted. |
+| TC_011 | `bad_stop` | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies RX rejection of a UART frame containing an incorrect stop bit and ensures `rx_valid` is not asserted. |
+| TC_012 | `tx_back_to_back` | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies TX back-to-back transmission of two consecutive 8-bit frames and checks that both frames are transmitted correctly. |
+| TC_013 | `rx_back_to_back` | 2026-08-13 | Md. Sakib Hasan Shawon | Verifies RX back-to-back reception of two consecutive 8-bit frames and checks that both bytes are received correctly and in the correct order. |
+| -------| `all` | 2026-08-16 | Md. Sakib Hasan Shawon | Runs the complete directed UART test suite. |
 
 | REVISION | DATE       | AUTHOR          | DESCRIPTION                                            |
 |----------|------------|-----------------|--------------------------------------------------------|
@@ -35,1246 +36,1147 @@ See LICENSE file in the project root for full license information
 
 module adn_uart_tx_rx_tb;
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-// IMPORTS
-//////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // IMPORTS
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // Common testbench header providing test selection, pass/fail counters,
+  // note_case(), VCD/debug handling, and final test summary.
+  `include "vip/adn_common_tb_headers.sv"
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // LOCALPARAMS
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // RX clock is the reference clock for the UART receiver.
+  localparam time RX_CLK_PERIOD = 10ns;
+
+  // Receiver samples each UART bit using 8x oversampling.
+  localparam int OVERSAMPLE = 8;
+
+  // One UART bit period equals 8 RX clock cycles.
+  localparam time UART_BIT_TIME = RX_CLK_PERIOD * OVERSAMPLE;
+
+  // TX clock is configured to have exactly one UART bit per clock cycle.
+  localparam time TX_CLK_PERIOD = UART_BIT_TIME;
+
+  // Maximum number of RX clock cycles to wait for rx_valid.
+  localparam int RX_TIMEOUT_CYCLES = 200;
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // SIGNALS
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+
+  logic tx_clk;
+  logic rx_clk;
+
+  logic tx_arst_ni;
+  logic rx_arst_ni;
 
-// bring in the testbench essentials functions and macros
-`include "vip/adn_common_tb_headers.sv"
+  // UART interface shared between TX, RX, and the testbench.
+  adn_uart_if uart_if ();
+
+  // TX input/control signals and serial output.
+  logic       tx_valid;
+  logic       tx_ready;
+  logic [7:0] tx_data;
+  logic [1:0] tx_data_bits;
+  logic       tx_parity_en;
+  logic       tx_parity_type;
+  logic       tx_extra_stop;
+  logic       tx_serial;
+
+  // RX configuration signals and received data/status.
+  logic [1:0] rx_data_bits;
+  logic       rx_parity_en;
+  logic       rx_parity_type;
+  logic [7:0] rx_data;
+  logic       rx_valid;
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-// LOCALPARAMS
-//////////////////////////////////////////////////////////////////////////////////////////////////
+  // Testbench-controlled RX line.
+  // rx_tb_enable selects between direct RX stimulus and TX-RX loopback.
+  logic       rx_tb_line;
+  logic       rx_tb_enable;
 
-localparam time RX_CLK_PERIOD = 10ns;
-localparam int OVERSAMPLE = 8;
-localparam time UART_BIT_TIME = RX_CLK_PERIOD * OVERSAMPLE;
-localparam time TX_CLK_PERIOD = UART_BIT_TIME;
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // VARIABLES
+  //////////////////////////////////////////////////////////////////////////////////////////////////
 
-localparam int RX_TIMEOUT_CYCLES = 200;
+  // Stores the result of the TX and RX monitors for the current test.
+  bit         tx_result;
+  bit         rx_result;
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // RTLS
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // UART channel model:
+  //   0 -> connect TX directly to RX for loopback testing.
+  //   1 -> allow the testbench to drive the RX line directly.
+  assign uart_if.line = rx_tb_enable ? rx_tb_line : tx_serial;
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-// TEST RESULT COUNTER
-//////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  // TX DUT
+  //////////////////////////////////////////////////////////////////////////////
 
-int pass_count = 0;
-int fail_count = 0;
+  adn_uart_transmitter #(
+      .DATA_WIDTH(8)
+  ) u_tx (
+      .arst_ni(tx_arst_ni),
+      .clk_i  (tx_clk),
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-// CLOCK / RESET
-//////////////////////////////////////////////////////////////////////////////////////////////////
+      .data_ready_o(tx_ready),
+      .data_valid_i(tx_valid),
 
-logic tx_clk;
-logic rx_clk;
+      .data_i(tx_data),
 
-logic tx_arst_ni;
-logic rx_arst_ni;
+      .data_bits_i  (tx_data_bits),
+      .parity_en_i  (tx_parity_en),
+      .parity_type_i(tx_parity_type),
+      .extra_stop_i (tx_extra_stop),
 
-initial begin
-tx_clk = 1'b0;
-forever #(TX_CLK_PERIOD / 2) tx_clk = ~tx_clk;
-end
+      .tx_o(tx_serial)
+  );
 
-initial begin
-rx_clk = 1'b0;
-forever #(RX_CLK_PERIOD / 2) rx_clk = ~rx_clk;
-end
+  //////////////////////////////////////////////////////////////////////////////
+  // RX DUT
+  //////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-// UART INTERFACE
-//////////////////////////////////////////////////////////////////////////////////////////////////
+  adn_uart_receiver #(
+      .OVERSAMPLE(OVERSAMPLE)
+  ) u_rx (
+      .arst_ni(rx_arst_ni),
+      .clk_i  (rx_clk),
 
-adn_uart_if uart_if ();
+      .data_bits_i  (rx_data_bits),
+      .parity_en_i  (rx_parity_en),
+      .parity_type_i(rx_parity_type),
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-// TX SIGNALS
-//////////////////////////////////////////////////////////////////////////////////////////////////
+      .rx_i(uart_if.line),
 
-logic tx_valid;
-logic tx_ready;
-logic [7:0] tx_data;
+      .data_o(rx_data),
+      .data_valid_o(rx_valid)
+  );
 
-logic [1:0] tx_data_bits;
-logic tx_parity_en;
-logic tx_parity_type;
-logic tx_extra_stop;
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // METHODS
+  //////////////////////////////////////////////////////////////////////////////////////////////////
 
-logic tx_serial;
+  //////////////////////////////////////////////////////////////////////////////
+  // DATA WIDTH CONFIGURATION
+  //////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-// RX SIGNALS
-//////////////////////////////////////////////////////////////////////////////////////////////////
+  // Converts the testbench data-width value into the encoding expected
+  // by the UART TX/RX configuration inputs.
+  function automatic logic [1:0] data_bits_cfg(input int nbits);
 
-logic [1:0] rx_data_bits;
-logic rx_parity_en;
-logic rx_parity_type;
+    case (nbits)
 
-logic [7:0] rx_data;
-logic rx_valid;
+      5: return 2'b00;
+      6: return 2'b01;
+      7: return 2'b10;
+      8: return 2'b11;
 
-logic rx_tb_line;
-logic rx_tb_enable;
+      default: begin
+        $error("Invalid UART data width: %0d", nbits);
+        return 2'b00;
+      end
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-// TEST RESULTS
-//////////////////////////////////////////////////////////////////////////////////////////////////
+    endcase
 
-bit tx_result;
-bit rx_result;
+  endfunction
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-// UART CHANNEL MODEL
-//////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  // RESET
+  //////////////////////////////////////////////////////////////////////////////
 
-assign uart_if.line = rx_tb_enable ? rx_tb_line : tx_serial;
+  // Initializes the DUT and testbench signals, applies reset, and waits
+  // for both TX and RX domains to become stable before releasing reset.
+  task automatic reset_dut();
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-// TX DUT
-//////////////////////////////////////////////////////////////////////////////////////////////////
+    tx_arst_ni = 1'b0;
+    rx_arst_ni = 1'b0;
 
-adn_uart_transmitter #(
-.DATA_WIDTH(8)
-) u_tx (
-.arst_ni(tx_arst_ni),
-.clk_i (tx_clk),
+    tx_valid = 1'b0;
+    tx_data = 8'h00;
 
-.data_ready_o(tx_ready),
-.data_valid_i(tx_valid),
-.data_i(tx_data),
+    // Default UART configuration: 8 data bits, no parity, one stop bit.
+    tx_data_bits = data_bits_cfg(8);
+    tx_parity_en = 1'b0;
+    tx_parity_type = 1'b0;
+    tx_extra_stop = 1'b0;
 
-.data_bits_i (tx_data_bits),
-.parity_en_i (tx_parity_en),
-.parity_type_i(tx_parity_type),
-.extra_stop_i (tx_extra_stop),
+    rx_data_bits = data_bits_cfg(8);
+    rx_parity_en = 1'b0;
+    rx_parity_type = 1'b0;
 
-.tx_o(tx_serial)
-);
+    // Default RX line state is UART idle/high.
+    rx_tb_enable = 1'b0;
+    rx_tb_line = 1'b1;
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-// RX DUT
-//////////////////////////////////////////////////////////////////////////////////////////////////
+    tx_result = 1'b0;
+    rx_result = 1'b0;
 
-adn_uart_receiver #(
-.OVERSAMPLE(OVERSAMPLE)
-) u_rx (
-.arst_ni(rx_arst_ni),
-.clk_i (rx_clk),
+    // Keep reset asserted long enough for both clock domains.
+    repeat (5) @(posedge rx_clk);
+    repeat (2) @(posedge tx_clk);
 
-.data_bits_i (rx_data_bits),
-.parity_en_i (rx_parity_en),
-.parity_type_i(rx_parity_type),
+    // Release reset.
+    tx_arst_ni = 1'b1;
+    rx_arst_ni = 1'b1;
 
-.rx_i(uart_if.line),
+    // Allow both DUTs to operate for a few cycles after reset.
+    repeat (2) @(posedge tx_clk);
+    repeat (2) @(posedge rx_clk);
 
-.data_o(rx_data),
-.data_valid_o(rx_valid)
-);
+  endtask
 
-//////////////////////////////////////////////////////////////////////////////
-// UTILITY FUNCTIONS
-//////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  // TX DRIVER
+  //////////////////////////////////////////////////////////////////////////////
 
-function automatic logic [1:0] data_bits_cfg(input int nbits);
+  // Sends one byte to the UART transmitter.
+  // The task waits until TX is ready, configures the frame, and generates
+  // a one-cycle data_valid pulse.
+  task automatic send_tx(input logic [7:0] data, input int nbits = 8, input bit parity_en = 0,
+                         input bit parity_type = 0, input bit extra_stop = 0);
 
-case (nbits)
-5: return 2'b00;
-6: return 2'b01;
-7: return 2'b10;
-8: return 2'b11;
-default: begin
-$error("Invalid UART data width: %0d", nbits);
-return 2'b00;
-end
-endcase
+    // Wait until the transmitter can accept a new byte.
+    wait (tx_ready === 1'b1);
 
-endfunction
+    @(negedge tx_clk);
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-// RESET
-//////////////////////////////////////////////////////////////////////////////////////////////////
+    tx_data = data;
+    tx_data_bits = data_bits_cfg(nbits);
+    tx_parity_en = parity_en;
+    tx_parity_type = parity_type;
+    tx_extra_stop = extra_stop;
+    tx_valid = 1'b1;
 
-task automatic reset_dut();
+    // Keep data_valid asserted for one TX clock cycle.
+    @(posedge tx_clk);
 
-tx_arst_ni = 1'b0;
-rx_arst_ni = 1'b0;
+    @(negedge tx_clk);
+    tx_valid = 1'b0;
 
-tx_valid = 1'b0;
-tx_data = 8'h00;
+  endtask
 
-tx_data_bits = data_bits_cfg(8);
-tx_parity_en = 1'b0;
-tx_parity_type = 1'b0;
-tx_extra_stop = 1'b0;
+  //////////////////////////////////////////////////////////////////////////////
+  // RX DRIVER
+  //////////////////////////////////////////////////////////////////////////////
 
-rx_data_bits = data_bits_cfg(8);
-rx_parity_en = 1'b0;
-rx_parity_type = 1'b0;
+  // Generates a UART frame directly on the RX input.
+  //
+  // Frame format:
+  //   IDLE -> START -> DATA -> optional PARITY -> STOP -> optional STOP
+  //
+  // Data is transmitted LSB first. bad_parity and bad_stop are used
+  // to intentionally generate invalid UART frames.
+  task automatic send_uart(input logic [7:0] data, input int nbits = 8, input bit parity_en = 0,
+                           input bit parity_type = 0, input bit extra_stop = 0,
+                           input bit bad_parity = 0, input bit bad_stop = 0);
 
-rx_tb_enable = 1'b0;
-rx_tb_line = 1'b1;
+    time  bit_time;
+    logic parity;
+    int   i;
 
-tx_result = 1'b0;
-rx_result = 1'b0;
+    // Every UART bit occupies exactly one UART_BIT_TIME.
+    bit_time = UART_BIT_TIME;
 
-// Hold reset for both clock domains.
-repeat (5) @(posedge rx_clk);
+    // Calculate parity from the selected number of data bits.
+    parity   = 1'b0;
 
-repeat (2) @(posedge tx_clk);
+    for (i = 0; i < nbits; i++) parity ^= data[i];
 
-tx_arst_ni = 1'b1;
-rx_arst_ni = 1'b1;
+    // Convert the calculated parity to odd parity when requested.
+    if (parity_type) parity = ~parity;
 
-// Allow both DUTs to leave reset.
-repeat (2) @(posedge tx_clk);
+    // Invert parity to intentionally generate a parity error.
+    if (bad_parity) parity = ~parity;
 
-repeat (2) @(posedge rx_clk);
+    // IDLE
+    rx_tb_line = 1'b1;
+    #(bit_time);
 
-endtask
+    // START
+    rx_tb_line = 1'b0;
+    #(bit_time);
 
-//////////////////////////////////////////////////////////////////////////////
-// CHECK RESULT
-//////////////////////////////////////////////////////////////////////////////
+    // DATA - UART transmits the least significant bit first.
+    for (i = 0; i < nbits; i++) begin
+      rx_tb_line = data[i];
+      #(bit_time);
+    end
 
-task automatic check_result(input bit result, input string test_name);
+    // Optional PARITY bit.
+    if (parity_en) begin
+      rx_tb_line = parity;
+      #(bit_time);
+    end
 
-if (result) begin
-pass_count++;
-$display("[%0t] %s : PASS", $time, test_name);
-end else begin
-fail_count++;
-$error("[%0t] %s : FAIL", $time, test_name);
-end
+    // STOP bit. Drive low when bad_stop is enabled to create an invalid frame.
+    rx_tb_line = bad_stop ? 1'b0 : 1'b1;
+    #(bit_time);
 
-endtask
+    // Optional second STOP bit.
+    if (extra_stop) begin
+      rx_tb_line = 1'b1;
+      #(bit_time);
+    end
 
-//////////////////////////////////////////////////////////////////////////////
-// TX DRIVER
-//////////////////////////////////////////////////////////////////////////////
+  endtask
 
-task automatic send_tx(input logic [7:0] data, input int nbits = 8, input bit parity_en = 0,
-input bit parity_type = 0, input bit extra_stop = 0);
+  //////////////////////////////////////////////////////////////////////////////
+  // TX MONITOR
+  //////////////////////////////////////////////////////////////////////////////
 
-wait (tx_ready === 1'b1);
+  // Monitors the serialized TX frame and compares it against the expected
+  // data, parity, and stop-bit configuration.
+  task automatic monitor_tx(input logic [7:0] expected_data, input int nbits, input bit parity_en,
+                            input bit parity_type, input bit extra_stop, output bit result);
 
-@(negedge tx_clk);
+    logic [7:0] observed_data;
+    logic parity;
+    logic expected_parity;
+    bit passed;
 
-tx_data = data;
-tx_data_bits = data_bits_cfg(nbits);
-tx_parity_en = parity_en;
-tx_parity_type = parity_type;
-tx_extra_stop = extra_stop;
-tx_valid = 1'b1;
+    result = 1'b0;
+    passed = 1'b1;
 
-@(posedge tx_clk);
+    observed_data = 8'h00;
+    expected_parity = 1'b0;
 
-@(negedge tx_clk);
+    // Wait for the falling edge that indicates the START bit.
+    @(negedge tx_serial);
 
-tx_valid = 1'b0;
+    // Sample the center of the START bit.
+    #(UART_BIT_TIME / 2);
 
-endtask
+    if (tx_serial !== 1'b0) begin
+      $error("[%0t] TX MONITOR: INVALID START bit", $time);
+      passed = 1'b0;
+    end
 
-/////////////////////////////////////////////////////////////
-// INTERFACE RX DRIVER
-//
-// Used to test receiver independently.
-/////////////////////////////////////////////////////////////
+    // Move to the center of the first DATA bit.
+    #(UART_BIT_TIME);
 
-task automatic send_uart(input logic [7:0] data, input int nbits = 8, input bit parity_en = 0,
-input bit parity_type = 0, input bit extra_stop = 0,
-input bit bad_parity = 0, input bit bad_stop = 0);
+    // Sample DATA bits LSB first, one UART bit period apart.
+    for (int i = 0; i < nbits; i++) begin
+      observed_data[i] = tx_serial;
+      #(TX_CLK_PERIOD);
+    end
 
-time bit_time;
-logic parity;
-int i;
+    // Compare the complete received data word.
+    if (observed_data !== expected_data) begin
 
-bit_time = UART_BIT_TIME;
+      $error("[%0t] TX MONITOR: DATA ERROR expected=%02h received=%02h", $time, expected_data,
+             observed_data);
 
-parity = 1'b0;
+      passed = 1'b0;
 
-for (i = 0; i < nbits; i++) parity ^= data[i];
+    end
 
-if (parity_type) parity = ~parity;
+    // PARITY
+    if (parity_en) begin
 
-if (bad_parity) parity = ~parity;
+      // Calculate the expected parity from the transmitted data.
+      parity = 1'b0;
 
-// IDLE
-rx_tb_line = 1'b1;
-#(bit_time);
+      for (int i = 0; i < nbits; i++) parity ^= expected_data[i];
 
-// START
-rx_tb_line = 1'b0;
-#(bit_time);
+      if (parity_type) parity = ~parity;
 
-// DATA
-for (i = 0; i < nbits; i++) begin
-rx_tb_line = data[i];
-#(bit_time);
-end
+      expected_parity = parity;
 
-// PARITY
-if (parity_en) begin
-rx_tb_line = parity;
-#(bit_time);
-end
+      if (tx_serial !== expected_parity) begin
 
-// STOP
-rx_tb_line = bad_stop ? 1'b0 : 1'b1;
-#(bit_time);
+        $error("[%0t] TX MONITOR: PARITY ERROR expected=%0b received=%0b", $time, expected_parity,
+               tx_serial);
 
-// SECOND STOP
-if (extra_stop) begin
-rx_tb_line = 1'b1;
-#(bit_time);
-end
+        passed = 1'b0;
 
-endtask
+      end
 
-/////////////////////////////////////////////////////////////
-// TX MONITOR
-//
-// Checks:
-// START -> DATA -> PARITY -> STOP
-/////////////////////////////////////////////////////////////
+      #(TX_CLK_PERIOD);
 
-task automatic monitor_tx(input logic [7:0] expected_data, input int nbits, input bit parity_en,
-input bit parity_type, input bit extra_stop, output bit result);
+    end
 
-logic [7:0] observed_data;
-logic parity;
-logic expected_parity;
-bit passed;
+    // STOP
+    if (tx_serial !== 1'b1) begin
 
-result = 1'b0;
-passed = 1'b1;
+      $error("[%0t] TX MONITOR: STOP ERROR expected=1 received=%0b", $time, tx_serial);
 
-observed_data = 8'h00;
-expected_parity = 1'b0;
+      passed = 1'b0;
 
-// ---------------------------------------------------------
-// WAIT FOR START BIT
-// ---------------------------------------------------------
+    end
 
-@(negedge tx_serial);
+    #(TX_CLK_PERIOD);
 
-// Move to center of START bit.
-#(UART_BIT_TIME / 2);
+    // EXTRA STOP
+    if (extra_stop) begin
 
-if (tx_serial !== 1'b0) begin
-$error("[%0t] TX MONITOR: INVALID START bit", $time);
-passed = 1'b0;
-end
+      if (tx_serial !== 1'b1) begin
+        $error("[%0t] TX MONITOR: SECOND STOP ERROR", $time);
+        passed = 1'b0;
+      end
 
-// ---------------------------------------------------------
-// MOVE TO CENTER OF FIRST DATA BIT
-// ---------------------------------------------------------
+      #(TX_CLK_PERIOD);
 
-#(UART_BIT_TIME);
+    end
 
-// ---------------------------------------------------------
-// DATA
-// ---------------------------------------------------------
+    result = passed;
 
-for (int i = 0; i < nbits; i++) begin
+  endtask
 
-observed_data[i] = tx_serial;
+  //////////////////////////////////////////////////////////////////////////////
+  // RX MONITOR
+  //////////////////////////////////////////////////////////////////////////////
 
-#(TX_CLK_PERIOD);
+  // Waits for rx_valid and verifies that the received data matches
+  // the expected value. A timeout prevents the testbench from waiting forever
+  // if the receiver does not recognize the UART frame.
+  task automatic monitor_rx(input logic [7:0] expected_data, output bit result);
 
-end
+    result = 1'b0;
 
-// ---------------------------------------------------------
-// DATA CHECK
-// ---------------------------------------------------------
+    // Wait for the receiver to indicate that a complete frame was received.
+    for (int timeout = 0; timeout < RX_TIMEOUT_CYCLES; timeout++) begin
 
-if (observed_data !== expected_data) begin
+      @(posedge rx_clk);
 
-$error("[%0t] TX MONITOR: DATA ERROR expected=%02h received=%02h", $time, expected_data,
-observed_data);
+      if (rx_valid === 1'b1) break;
 
-passed = 1'b0;
+    end
 
-end
+    // No valid frame was received within the allowed time.
+    if (rx_valid !== 1'b1) begin
+      $error("[%0t] RX MONITOR: TIMEOUT", $time);
+      return;
+    end
 
-// ---------------------------------------------------------
-// PARITY
-// ---------------------------------------------------------
+    // Verify the received data.
+    if (rx_data !== expected_data) begin
 
-if (parity_en) begin
+      $error("[%0t] RX MONITOR: DATA ERROR expected=%02h received=%02h", $time, expected_data,
+             rx_data);
 
-parity = 1'b0;
+      return;
 
-for (int i = 0; i < nbits; i++) parity ^= expected_data[i];
+    end
 
-if (parity_type) parity = ~parity;
+    result = 1'b1;
 
-expected_parity = parity;
+  endtask
 
-if (tx_serial !== expected_parity) begin
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // PROCEDURALS
+  //////////////////////////////////////////////////////////////////////////////////////////////////
 
-$error("[%0t] TX MONITOR: PARITY ERROR expected=%0b received=%0b", $time, expected_parity,
-tx_serial);
+  //////////////////////////////////////////////////////////////////////////////
+  // TEST 1
+  // RESET
+  //////////////////////////////////////////////////////////////////////////////
 
-passed = 1'b0;
+  // Verifies the default UART output state after reset.
+  // TX must remain idle high and RX valid must remain low.
+  task automatic test_1_reset();
+    bit result;
+    $display("\n========== TEST 1: RESET ==========");
+    reset_dut();
+    result = ((tx_serial === 1'b1) && (rx_valid === 1'b0));
+    note_case(result);
+  endtask
 
-end
+  //////////////////////////////////////////////////////////////////////////////
+  // TEST 2
+  // TX BASIC
+  //////////////////////////////////////////////////////////////////////////////
 
-#(TX_CLK_PERIOD);
+  // Verifies basic 8-bit TX operation without parity or extra stop bits.
+  task automatic test_2_tx();
+    $display("\n========== TEST 2: TX BASIC ==========");
+    reset_dut();
+    // Monitor and transmit the same byte concurrently.
+    fork
+      monitor_tx(8'hA5, 8, 0, 0, 0, tx_result);
+      send_tx(8'hA5, 8, 0, 0, 0);
+    join
+    note_case(tx_result);
+  endtask
 
-end
+  //////////////////////////////////////////////////////////////////////////////
+  // TEST 3
+  // RX BASIC
+  //////////////////////////////////////////////////////////////////////////////
 
-// ---------------------------------------------------------
-// STOP BIT
-// ---------------------------------------------------------
+  // Verifies basic 8-bit RX operation using a directly generated UART frame.
+  task automatic test_3_rx();
+    $display("\n========== TEST 3: RX BASIC ==========");
+    reset_dut();
 
-if (tx_serial !== 1'b1) begin
+    // Enable direct testbench control of the RX line.
+    rx_tb_enable   = 1'b1;
 
-$error("[%0t] TX MONITOR: STOP ERROR expected=1 received=%0b", $time, tx_serial);
+    rx_data_bits   = data_bits_cfg(8);
+    rx_parity_en   = 1'b0;
+    rx_parity_type = 1'b0;
 
-passed = 1'b0;
+    // Generate the RX frame while monitoring the receiver.
+    fork
+      monitor_rx(8'h3C, rx_result);
+      send_uart(8'h3C, 8, 0, 0, 0);
+    join
 
-end
+    note_case(rx_result);
 
-#(TX_CLK_PERIOD);
+    // Return the RX line to loopback mode.
+    rx_tb_enable = 1'b0;
 
-// ---------------------------------------------------------
-// EXTRA STOP BIT
-// ---------------------------------------------------------
+  endtask
 
-if (extra_stop) begin
+  //////////////////////////////////////////////////////////////////////////////
+  // TEST 4
+  // TX -> RX LOOPBACK
+  //////////////////////////////////////////////////////////////////////////////
 
-if (tx_serial !== 1'b1) begin
+  // Verifies the complete TX-to-RX data path using the UART interface
+  // as a direct loopback connection.
+  task automatic test_4_loopback();
 
-$error("[%0t] TX MONITOR: SECOND STOP ERROR", $time);
+    $display("\n========== TEST 4: TX -> RX LOOPBACK ==========");
+    reset_dut();
 
-passed = 1'b0;
+    // Disable direct RX stimulus so TX is connected directly to RX.
+    rx_tb_enable   = 1'b0;
 
-end
+    tx_data_bits   = data_bits_cfg(8);
+    tx_parity_en   = 1'b0;
+    tx_parity_type = 1'b0;
+    tx_extra_stop  = 1'b0;
 
-#(TX_CLK_PERIOD);
+    rx_data_bits   = data_bits_cfg(8);
+    rx_parity_en   = 1'b0;
+    rx_parity_type = 1'b0;
 
-end
+    // Monitor both sides while transmitting the same byte.
+    fork
+      monitor_tx(8'h55, 8, 0, 0, 0, tx_result);
+      monitor_rx(8'h55, rx_result);
+      send_tx(8'h55, 8, 0, 0, 0);
+    join
 
-result = passed;
+    note_case(tx_result);
+    note_case(rx_result);
 
-endtask
+  endtask
 
-/////////////////////////////////////////////////////////////
-// RX MONITOR
-/////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  // TEST 5
+  // DATA WIDTH
+  //////////////////////////////////////////////////////////////////////////////
 
-task automatic monitor_rx(input logic [7:0] expected_data, output bit result);
+  // Verifies UART operation with 5-, 6-, 7-, and 8-bit data widths.
+  task automatic test_5_data_width();
 
-result = 1'b0;
+    $display("\n========== TEST 5: DATA WIDTH ==========");
 
-for (int timeout = 0; timeout < RX_TIMEOUT_CYCLES; timeout++) begin
+    // 5-bit data
+    reset_dut();
 
-@(posedge rx_clk);
+    tx_data_bits = data_bits_cfg(5);
+    rx_data_bits = data_bits_cfg(5);
 
-if (rx_valid === 1'b1) break;
+    fork
+      monitor_tx(8'h15, 5, 0, 0, 0, tx_result);
+      monitor_rx(8'h15, rx_result);
+      send_tx(8'h15, 5, 0, 0, 0);
+    join
 
-end
+    note_case(tx_result);
+    note_case(rx_result);
 
-if (rx_valid !== 1'b1) begin
-$error("[%0t] RX MONITOR: TIMEOUT", $time);
-return;
-end
+    // 6-bit data
+    reset_dut();
 
-if (rx_data !== expected_data) begin
-$error("[%0t] RX MONITOR: DATA ERROR expected=%02h received=%02h", $time, expected_data,
-rx_data);
-return;
-end
+    tx_data_bits = data_bits_cfg(6);
+    rx_data_bits = data_bits_cfg(6);
 
-result = 1'b1;
+    fork
+      monitor_tx(8'h2A, 6, 0, 0, 0, tx_result);
+      monitor_rx(8'h2A, rx_result);
+      send_tx(8'h2A, 6, 0, 0, 0);
+    join
 
-endtask
+    note_case(tx_result);
+    note_case(rx_result);
 
-/////////////////////////////////////////////////////////////
-// TEST 1
-// RESET
-/////////////////////////////////////////////////////////////
+    // 7-bit data
+    reset_dut();
 
-task automatic test_1_reset();
+    tx_data_bits = data_bits_cfg(7);
+    rx_data_bits = data_bits_cfg(7);
 
-bit result;
+    fork
+      monitor_tx(8'h55, 7, 0, 0, 0, tx_result);
+      monitor_rx(8'h55, rx_result);
+      send_tx(8'h55, 7, 0, 0, 0);
+    join
 
-$display("\n========== TEST 1: RESET ==========");
+    note_case(tx_result);
+    note_case(rx_result);
 
-reset_dut();
+    // 8-bit data
+    reset_dut();
 
-result = ((tx_serial === 1'b1) && (rx_valid === 1'b0));
+    tx_data_bits = data_bits_cfg(8);
+    rx_data_bits = data_bits_cfg(8);
 
-check_result(result, "TEST 1: RESET");
+    fork
+      monitor_tx(8'hA5, 8, 0, 0, 0, tx_result);
+      monitor_rx(8'hA5, rx_result);
+      send_tx(8'hA5, 8, 0, 0, 0);
+    join
 
-endtask
+    note_case(tx_result);
+    note_case(rx_result);
 
-/////////////////////////////////////////////////////////////
-// TEST 2
-// TX BASIC
-/////////////////////////////////////////////////////////////
+  endtask
 
-task automatic test_2_tx();
+  //////////////////////////////////////////////////////////////////////////////
+  // TEST 6
+  // EVEN PARITY
+  //////////////////////////////////////////////////////////////////////////////
 
-$display("\n========== TEST 2: TX BASIC ==========");
+  // Verifies TX and RX operation using 7-bit data with even parity.
+  task automatic test_6_even_parity();
 
-reset_dut();
+    $display("\n========== TEST 6: EVEN PARITY ==========");
 
-tx_data_bits = data_bits_cfg(8);
-tx_parity_en = 1'b0;
-tx_extra_stop = 1'b0;
+    reset_dut();
 
-fork
+    // Configure both TX and RX for even parity.
+    tx_data_bits   = data_bits_cfg(7);
+    tx_parity_en   = 1'b1;
+    tx_parity_type = 1'b0;
+    tx_extra_stop  = 1'b0;
 
-monitor_tx(8'hA5, 8, 0, 0, 0, tx_result);
+    rx_data_bits   = data_bits_cfg(7);
+    rx_parity_en   = 1'b1;
+    rx_parity_type = 1'b0;
 
-send_tx(8'hA5, 8, 0, 0, 0);
+    fork
+      monitor_tx(7'h55, 7, 1, 0, 0, tx_result);
+      monitor_rx(7'h55, rx_result);
+      send_tx(7'h55, 7, 1, 0, 0);
+    join
 
-join
+    note_case(tx_result);
+    note_case(rx_result);
 
-check_result(tx_result, "TEST 2: TX BASIC");
+  endtask
 
-endtask
+  //////////////////////////////////////////////////////////////////////////////
+  // TEST 6A
+  // EVEN PARITY TX
+  //////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////
-// TEST 3
-// RX BASIC
-/////////////////////////////////////////////////////////////
+  // Verifies that the transmitter generates the correct even parity bit.
+  task automatic test_6_even_parity_tx();
 
-task automatic test_3_rx();
+    $display("\n========== TEST 6A: EVEN PARITY TX ==========");
 
-$display("\n========== TEST 3: RX BASIC ==========");
+    reset_dut();
 
-reset_dut();
+    fork
+      monitor_tx(7'h55, 7, 1, 0, 0, tx_result);
+      send_tx(7'h55, 7, 1, 0, 0);
+    join
+    note_case(tx_result);
+  endtask
 
-rx_tb_enable = 1'b1;
+  //////////////////////////////////////////////////////////////////////////////
+  // TEST 6B
+  // EVEN PARITY RX
+  //////////////////////////////////////////////////////////////////////////////
 
-rx_data_bits = data_bits_cfg(8);
-rx_parity_en = 1'b0;
-rx_parity_type = 1'b0;
+  // Verifies that the receiver correctly accepts a valid even-parity frame.
+  task automatic test_6_even_parity_rx();
 
-fork
+    $display("\n========== TEST 6B: EVEN PARITY RX ==========");
 
-monitor_rx(8'h3C, rx_result);
+    reset_dut();
 
-send_uart(8'h3C, 8, 0, 0, 0);
+    // Enable direct RX frame generation.
+    rx_tb_enable   = 1'b1;
 
-join
+    rx_data_bits   = data_bits_cfg(7);
+    rx_parity_en   = 1'b1;
+    rx_parity_type = 1'b0;
 
-check_result(rx_result, "TEST 3: RX BASIC");
+    fork
+      monitor_rx(7'h55, rx_result);
+      send_uart(7'h55, 7, 1, 0, 0);
+    join
+    note_case(rx_result);
+    rx_tb_enable = 1'b0;
+  endtask
 
-rx_tb_enable = 1'b0;
+  //////////////////////////////////////////////////////////////////////////////
+  // TEST 7
+  // ODD PARITY
+  //////////////////////////////////////////////////////////////////////////////
 
-endtask
+  // Verifies TX and RX operation using 7-bit data with odd parity.
+  task automatic test_7_odd_parity();
 
-/////////////////////////////////////////////////////////////
-// TEST 4
-// TX -> RX LOOPBACK
-/////////////////////////////////////////////////////////////
+    $display("\n========== TEST 7: ODD PARITY ==========");
 
-task automatic test_4_loopback();
+    reset_dut();
 
-$display("\n========== TEST 4: TX -> RX LOOPBACK ==========");
+    // Configure both TX and RX for odd parity.
+    tx_data_bits   = data_bits_cfg(7);
+    tx_parity_en   = 1'b1;
+    tx_parity_type = 1'b1;
+    tx_extra_stop  = 1'b0;
 
-reset_dut();
+    rx_data_bits   = data_bits_cfg(7);
+    rx_parity_en   = 1'b1;
+    rx_parity_type = 1'b1;
 
-rx_tb_enable = 1'b0;
+    fork
+      monitor_tx(7'h25, 7, 1, 1, 0, tx_result);
+      monitor_rx(7'h25, rx_result);
+      send_tx(7'h25, 7, 1, 1, 0);
+    join
 
-tx_data_bits = data_bits_cfg(8);
-tx_parity_en = 1'b0;
-tx_parity_type = 1'b0;
-tx_extra_stop = 1'b0;
+    note_case(tx_result);
+    note_case(rx_result);
 
-rx_data_bits = data_bits_cfg(8);
-rx_parity_en = 1'b0;
-rx_parity_type = 1'b0;
+  endtask
 
-fork
+  //////////////////////////////////////////////////////////////////////////////
+  // TEST 7A
+  // ODD PARITY TX
+  //////////////////////////////////////////////////////////////////////////////
 
-monitor_tx(8'h55, 8, 0, 0, 0, tx_result);
+  // Verifies that the transmitter generates the correct odd parity bit.
+  task automatic test_7_odd_parity_tx();
 
-monitor_rx(8'h55, rx_result);
+    $display("\n========== TEST 7A: ODD PARITY TX ==========");
 
-send_tx(8'h55, 8, 0, 0, 0);
+    reset_dut();
 
-join
+    fork
+      monitor_tx(7'h55, 7, 1, 1, 0, tx_result);
+      send_tx(7'h55, 7, 1, 1, 0);
+    join
 
-check_result(tx_result, "TEST 4: TX MONITOR");
-check_result(rx_result, "TEST 4: RX MONITOR");
+    note_case(tx_result);
+  endtask
 
-endtask
+  //////////////////////////////////////////////////////////////////////////////
+  // TEST 7B
+  // ODD PARITY RX
+  //////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////
-// TEST 5
-// DATA WIDTH
-/////////////////////////////////////////////////////////////
+  // Verifies that the receiver correctly accepts a valid odd-parity frame.
+  task automatic test_7_odd_parity_rx();
 
-task automatic test_5_data_width();
+    $display("\n========== TEST 7B: ODD PARITY RX ==========");
 
-$display("\n========== TEST 5: DATA WIDTH ==========");
+    reset_dut();
 
-// -----------------------------------------------------
-// 5 BIT
-// -----------------------------------------------------
+    rx_tb_enable   = 1'b1;
 
-reset_dut();
+    rx_data_bits   = data_bits_cfg(7);
+    rx_parity_en   = 1'b1;
+    rx_parity_type = 1'b1;
 
-tx_data_bits = data_bits_cfg(5);
-rx_data_bits = data_bits_cfg(5);
+    fork
+      monitor_rx(7'h55, rx_result);
+      send_uart(7'h55, 7, 1, 1, 0);
+    join
+    note_case(rx_result);
 
-fork
+    rx_tb_enable = 1'b0;
+  endtask
 
-monitor_tx(8'h15, 5, 0, 0, 0, tx_result);
+  //////////////////////////////////////////////////////////////////////////////
+  // TEST 8
+  // EXTRA STOP
+  //////////////////////////////////////////////////////////////////////////////
 
-monitor_rx(8'h15, rx_result);
+  // Verifies transmission and reception of a frame containing two stop bits.
+  task automatic test_8_extra_stop();
 
-send_tx(8'h15, 5, 0, 0, 0);
+    $display("\n========== TEST 8: EXTRA STOP ==========");
 
-join
+    reset_dut();
 
-check_result(tx_result, "TEST 5: 5-BIT TX");
-check_result(rx_result, "TEST 5: 5-BIT RX");
+    tx_data_bits   = data_bits_cfg(8);
+    tx_parity_en   = 1'b0;
+    tx_parity_type = 1'b0;
+    tx_extra_stop  = 1'b1;
 
-// -----------------------------------------------------
-// 6 BIT
-// -----------------------------------------------------
+    rx_data_bits   = data_bits_cfg(8);
+    rx_parity_en   = 1'b0;
+    rx_parity_type = 1'b0;
 
-reset_dut();
+    fork
+      monitor_tx(8'h96, 8, 0, 0, 1, tx_result);
+      monitor_rx(8'h96, rx_result);
+      send_tx(8'h96, 8, 0, 0, 1);
+    join
 
-tx_data_bits = data_bits_cfg(6);
-rx_data_bits = data_bits_cfg(6);
+    note_case(tx_result);
+    note_case(rx_result);
+  endtask
 
-fork
+  //////////////////////////////////////////////////////////////////////////////
+  // TEST 9
+  // MULTIPLE BYTES
+  //////////////////////////////////////////////////////////////////////////////
 
-monitor_tx(8'h2A, 6, 0, 0, 0, tx_result);
+  // Verifies that multiple consecutive bytes are transmitted and received
+  // in the correct order without data corruption.
+  task automatic test_9_multiple_bytes();
 
-monitor_rx(8'h2A, rx_result);
+    logic [7:0] data;
 
-send_tx(8'h2A, 6, 0, 0, 0);
+    $display("\n========== TEST 9: MULTIPLE BYTES ==========");
 
-join
+    reset_dut();
 
-check_result(tx_result, "TEST 5: 6-BIT TX");
-check_result(rx_result, "TEST 5: 6-BIT RX");
+    tx_data_bits = data_bits_cfg(8);
+    rx_data_bits = data_bits_cfg(8);
 
-// -----------------------------------------------------
-// 7 BIT
-// -----------------------------------------------------
+    // Send four consecutive bytes: 10, 11, 12, and 13.
+    for (int i = 0; i < 4; i++) begin
 
-reset_dut();
+      data = 8'h10 + i;
 
-tx_data_bits = data_bits_cfg(7);
-rx_data_bits = data_bits_cfg(7);
+      tx_result = 1'b0;
+      rx_result = 1'b0;
 
-fork
+      fork
 
-monitor_tx(8'h55, 7, 0, 0, 0, tx_result);
+        // Capture the current byte for the parallel TX monitor.
+        begin
+          automatic logic [7:0] expected = data;
+          monitor_tx(expected, 8, 0, 0, 0, tx_result);
+        end
 
-monitor_rx(8'h55, rx_result);
+        // Capture the current byte for the parallel RX monitor.
+        begin
+          automatic logic [7:0] expected = data;
+          monitor_rx(expected, rx_result);
+        end
 
-send_tx(8'h55, 7, 0, 0, 0);
+        // Transmit the current byte.
+        begin
+          automatic logic [7:0] expected = data;
+          send_tx(expected, 8, 0, 0, 0);
+        end
 
-join
+      join
 
-check_result(tx_result, "TEST 5: 7-BIT TX");
-check_result(rx_result, "TEST 5: 7-BIT RX");
+      note_case(tx_result);
+      note_case(rx_result);
 
-// -----------------------------------------------------
-// 8 BIT
-// -----------------------------------------------------
+      // Ensure the transmitter is ready before starting the next byte.
+      wait (tx_ready === 1'b1);
 
-reset_dut();
+    end
 
-tx_data_bits = data_bits_cfg(8);
-rx_data_bits = data_bits_cfg(8);
+  endtask
 
-fork
+  //////////////////////////////////////////////////////////////////////////////
+  // TEST 10
+  // BAD PARITY
+  //////////////////////////////////////////////////////////////////////////////
 
-monitor_tx(8'hA5, 8, 0, 0, 0, tx_result);
+  // Verifies that the receiver rejects a frame containing an incorrect
+  // parity bit and does not assert rx_valid.
+  task automatic test_10_bad_parity();
 
-monitor_rx(8'hA5, rx_result);
+    bit bad_parity_result;
 
-send_tx(8'hA5, 8, 0, 0, 0);
+    $display("\n========== TEST 10: BAD PARITY ==========");
 
-join
+    reset_dut();
 
-check_result(tx_result, "TEST 5: 8-BIT TX");
-check_result(rx_result, "TEST 5: 8-BIT RX");
+    // Enable direct RX stimulus and configure even parity.
+    rx_tb_enable = 1'b1;
 
-endtask
+    rx_data_bits = data_bits_cfg(8);
+    rx_parity_en = 1'b1;
+    rx_parity_type = 1'b0;
 
-/////////////////////////////////////////////////////////////
-// TEST 6
-// EVEN PARITY
-/////////////////////////////////////////////////////////////
+    // Test passes unless rx_valid is unexpectedly asserted.
+    bad_parity_result = 1'b1;
 
-task automatic test_6_even_parity();
+    fork
+      begin
+        // Generate a frame with intentionally corrupted parity.
+        send_uart(8'hA5, 8, 1, 0, 0, 1, 0);
+      end
 
-$display("\n========== TEST 6: EVEN PARITY ==========");
+      begin
 
-reset_dut();
+        // Monitor for an unexpected valid indication.
+        repeat (RX_TIMEOUT_CYCLES) begin
 
-tx_data_bits = data_bits_cfg(7);
-tx_parity_en = 1'b1;
-tx_parity_type = 1'b0;
-tx_extra_stop = 1'b0;
+          @(posedge rx_clk);
 
-rx_data_bits = data_bits_cfg(7);
-rx_parity_en = 1'b1;
-rx_parity_type = 1'b0;
+          if (rx_valid === 1'b1) begin
 
-fork
+            $error("[%0t] BAD PARITY: rx_valid asserted unexpectedly, data=%02h", $time, rx_data);
 
-monitor_tx(7'h55, 7, 1, 0, 0, tx_result);
+            bad_parity_result = 1'b0;
 
-monitor_rx(7'h55, rx_result);
+            break;
+          end
+        end
+      end
+    join
 
-send_tx(7'h55, 7, 1, 0, 0);
+    note_case(bad_parity_result);
 
-join
+    rx_tb_enable = 1'b0;
+  endtask
 
-check_result(tx_result, "TEST 6: EVEN PARITY TX");
-check_result(rx_result, "TEST 6: EVEN PARITY RX");
+  //////////////////////////////////////////////////////////////////////////////
+  // TEST 11
+  // BAD STOP
+  //////////////////////////////////////////////////////////////////////////////
 
-endtask
+  // Verifies that the receiver rejects a frame with an invalid stop bit.
+  task automatic test_11_bad_stop();
 
-/////////////////////////////////////////////////////////////
-// TEST 6A
-// EVEN PARITY - TX ONLY
-/////////////////////////////////////////////////////////////
+    bit bad_stop_result;
 
-task automatic test_6_even_parity_tx();
+    $display("\n========== TEST 11: BAD STOP BIT ==========");
 
-$display("\n========== TEST 6A: EVEN PARITY TX ==========");
+    reset_dut();
 
-reset_dut();
+    rx_tb_enable = 1'b1;
 
-tx_data_bits = data_bits_cfg(7);
-tx_parity_en = 1'b1;
-tx_parity_type = 1'b0;
-tx_extra_stop = 1'b0;
+    rx_data_bits = data_bits_cfg(8);
+    rx_parity_en = 1'b0;
+    rx_parity_type = 1'b0;
 
-fork
+    // Test passes unless rx_valid is unexpectedly asserted.
+    bad_stop_result = 1'b1;
 
-monitor_tx(7'h55, 7, 1, 0, 0, tx_result);
+    fork
 
-send_tx(7'h55, 7, 1, 0, 0);
+      begin
+        // Generate a frame with an intentionally invalid stop bit.
+        send_uart(8'h5A, 8, 0, 0, 0, 0, 1);
+      end
 
-join
+      begin
 
-check_result(tx_result, "TEST 6A: EVEN PARITY TX");
+        // Monitor for an unexpected valid indication.
+        repeat (RX_TIMEOUT_CYCLES) begin
 
-endtask
+          @(posedge rx_clk);
 
-/////////////////////////////////////////////////////////////
-// TEST 6B
-// EVEN PARITY - RX ONLY
-/////////////////////////////////////////////////////////////
+          if (rx_valid === 1'b1) begin
 
-task automatic test_6_even_parity_rx();
+            $error("[%0t] BAD STOP: rx_valid asserted unexpectedly, data=%02h", $time, rx_data);
 
-$display("\n========== TEST 6B: EVEN PARITY RX ==========");
+            bad_stop_result = 1'b0;
 
-reset_dut();
+            break;
+          end
+        end
+      end
+    join
 
-rx_tb_enable = 1'b1;
+    note_case(bad_stop_result);
 
-rx_data_bits = data_bits_cfg(7);
-rx_parity_en = 1'b1;
-rx_parity_type = 1'b0;
+    rx_tb_enable = 1'b0;
+  endtask
 
-fork
+  //////////////////////////////////////////////////////////////////////////////
+  // TEST 12
+  // TX BACK-TO-BACK
+  //////////////////////////////////////////////////////////////////////////////
 
-monitor_rx(7'h55, rx_result);
+  // Verifies that the transmitter can accept and transmit two consecutive
+  // bytes while preserving their order.
+  task automatic test_12_tx_back_to_back();
 
-send_uart(7'h55, 7, 1, 0, 0);
+    bit result1;
+    bit result2;
 
-join
+    $display("\n========== TEST 12: TX BACK-TO-BACK ==========");
 
-check_result(rx_result, "TEST 6B: EVEN PARITY RX");
+    reset_dut();
 
-rx_tb_enable = 1'b0;
+    fork
+      begin
+        // Send the second byte as soon as the transmitter becomes ready.
+        send_tx(8'h11, 8, 0, 0, 0);
+        send_tx(8'h22, 8, 0, 0, 0);
+      end
 
-endtask
+      begin
+        // Verify both transmitted frames in sequence.
+        monitor_tx(8'h11, 8, 0, 0, 0, result1);
+        monitor_tx(8'h22, 8, 0, 0, 0, result2);
+      end
+    join
 
-/////////////////////////////////////////////////////////////
-// TEST 7
-// ODD PARITY
-/////////////////////////////////////////////////////////////
+    note_case(result1);
+    note_case(result2);
 
-task automatic test_7_odd_parity();
+  endtask
 
-$display("\n========== TEST 7: ODD PARITY ==========");
+  //////////////////////////////////////////////////////////////////////////////
+  // TEST 13
+  // RX BACK-TO-BACK
+  //////////////////////////////////////////////////////////////////////////////
 
-reset_dut();
+  // Verifies that the receiver can receive two consecutive frames
+  // and preserve their order.
+  task automatic test_13_rx_back_to_back();
 
-tx_data_bits = data_bits_cfg(7);
-tx_parity_en = 1'b1;
-tx_parity_type = 1'b1;
-tx_extra_stop = 1'b0;
+    bit result1;
+    bit result2;
 
-rx_data_bits = data_bits_cfg(7);
-rx_parity_en = 1'b1;
-rx_parity_type = 1'b1;
+    $display("\n========== TEST 13: RX BACK-TO-BACK ==========");
 
-fork
+    reset_dut();
 
-monitor_tx(7'h25, 7, 1, 1, 0, tx_result);
+    // Enable direct RX frame generation.
+    rx_tb_enable = 1'b1;
 
-monitor_rx(7'h25, rx_result);
+    rx_data_bits = data_bits_cfg(8);
+    rx_parity_en = 1'b0;
+    rx_parity_type = 1'b0;
 
-send_tx(7'h25, 7, 1, 1, 0);
+    result1 = 1'b0;
+    result2 = 1'b0;
 
-join
+    fork
 
-check_result(tx_result, "TEST 7: ODD PARITY TX");
-check_result(rx_result, "TEST 7: ODD PARITY RX");
+      begin
+        // Check the two received bytes in sequence.
+        monitor_rx(8'h11, result1);
+        monitor_rx(8'h22, result2);
+      end
 
-endtask
+      begin
+        // Generate the two UART frames in sequence.
+        send_uart(8'h11, 8, 0, 0, 0);
+        send_uart(8'h22, 8, 0, 0, 0);
+      end
 
-/////////////////////////////////////////////////////////////
-// TEST 7A
-// ODD PARITY - TX ONLY
-/////////////////////////////////////////////////////////////
+    join
 
-task automatic test_7_odd_parity_tx();
+    note_case(result1);
+    note_case(result2);
 
-$display("\n========== TEST 7A: ODD PARITY TX ==========");
+    rx_tb_enable = 1'b0;
+  endtask
 
-reset_dut();
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // CLOCK GENERATION
+  //////////////////////////////////////////////////////////////////////////////////////////////////
 
-tx_data_bits = data_bits_cfg(7);
-tx_parity_en = 1'b1;
-tx_parity_type = 1'b1;
-tx_extra_stop = 1'b0;
+  // TX clock period equals one complete UART bit period.
+  initial begin
+    tx_clk = 1'b0;
+    forever #(TX_CLK_PERIOD / 2) tx_clk = ~tx_clk;
+  end
 
-fork
+  // RX clock runs at the oversampling frequency.
+  initial begin
+    rx_clk = 1'b0;
+    forever #(RX_CLK_PERIOD / 2) rx_clk = ~rx_clk;
+  end
 
-monitor_tx(7'h55, 7, 1, 1, 0, tx_result);
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // MAIN TEST
+  //////////////////////////////////////////////////////////////////////////////////////////////////
 
-send_tx(7'h55, 7, 1, 1, 0);
+  initial begin
 
-join
+    // Initialize all testbench and DUT control signals.
+    tx_arst_ni = 1'b0;
+    rx_arst_ni = 1'b0;
 
-check_result(tx_result, "TEST 7A: ODD PARITY TX");
+    tx_valid = 1'b0;
+    tx_data = 8'h00;
 
-endtask
+    tx_data_bits = data_bits_cfg(8);
+    tx_parity_en = 1'b0;
+    tx_parity_type = 1'b0;
+    tx_extra_stop = 1'b0;
 
-/////////////////////////////////////////////////////////////
-// TEST 7B
-// ODD PARITY - RX ONLY
-/////////////////////////////////////////////////////////////
+    rx_data_bits = data_bits_cfg(8);
+    rx_parity_en = 1'b0;
+    rx_parity_type = 1'b0;
 
-task automatic test_7_odd_parity_rx();
+    rx_tb_enable = 1'b0;
+    rx_tb_line = 1'b1;
 
-$display("\n========== TEST 7B: ODD PARITY RX ==========");
+    ////////////////////////////////////////////////////////////////////////
+    // TEST SELECTION
+    ////////////////////////////////////////////////////////////////////////
 
-reset_dut();
+    // Select an individual test using +TN=<test_name>.
+    // Use +TN=all to execute the complete UART test suite.
+    case (test_name)
 
-rx_tb_enable = 1'b1;
+      "reset": test_1_reset();
+      "tx": test_2_tx();
+      "rx": test_3_rx();
+      "loopback": test_4_loopback();
+      "data_width": test_5_data_width();
+      "even_parity": test_6_even_parity();
+      "even_parity_tx": test_6_even_parity_tx();
+      "even_parity_rx": test_6_even_parity_rx();
+      "odd_parity": test_7_odd_parity();
+      "odd_parity_tx": test_7_odd_parity_tx();
+      "odd_parity_rx": test_7_odd_parity_rx();
+      "extra_stop": test_8_extra_stop();
+      "multiple_bytes": test_9_multiple_bytes();
+      "bad_parity": test_10_bad_parity();
+      "bad_stop": test_11_bad_stop();
+      "tx_back_to_back": test_12_tx_back_to_back();
+      "rx_back_to_back": test_13_rx_back_to_back();
 
-rx_data_bits = data_bits_cfg(7);
-rx_parity_en = 1'b1;
-rx_parity_type = 1'b1;
+      // Run the complete directed UART test suite.
+      "all": begin
 
-fork
+        test_1_reset();
+        test_2_tx();
+        test_3_rx();
+        test_4_loopback();
+        test_5_data_width();
+        test_6_even_parity();
+        test_6_even_parity_tx();
+        test_6_even_parity_rx();
+        test_7_odd_parity();
+        test_7_odd_parity_tx();
+        test_7_odd_parity_rx();
+        test_8_extra_stop();
+        test_9_multiple_bytes();
+        test_10_bad_parity();
+        test_11_bad_stop();
+        test_12_tx_back_to_back();
+        test_13_rx_back_to_back();
+      end
 
-monitor_rx(7'h55, rx_result);
+      // Report an error if the requested test name is not supported.
+      default: begin
+        $error("Unknown test name: %s", test_name);
+      end
+    endcase
 
-send_uart(7'h55, 7, 1, 1, 0);
-
-join
-
-check_result(rx_result, "TEST 7B: ODD PARITY RX");
-
-rx_tb_enable = 1'b0;
-
-endtask
-
-/////////////////////////////////////////////////////////////
-// TEST 8
-// EXTRA STOP BIT
-/////////////////////////////////////////////////////////////
-
-task automatic test_8_extra_stop();
-
-$display("\n========== TEST 8: EXTRA STOP ==========");
-
-reset_dut();
-
-tx_data_bits = data_bits_cfg(8);
-tx_parity_en = 1'b0;
-tx_parity_type = 1'b0;
-tx_extra_stop = 1'b1;
-
-rx_data_bits = data_bits_cfg(8);
-rx_parity_en = 1'b0;
-rx_parity_type = 1'b0;
-
-fork
-
-monitor_tx(8'h96, 8, 0, 0, 1, tx_result);
-
-monitor_rx(8'h96, rx_result);
-
-send_tx(8'h96, 8, 0, 0, 1);
-
-join
-
-check_result(tx_result, "TEST 8: EXTRA STOP TX");
-
-// RX result only verifies that the receiver accepts
-// a frame containing an extra stop bit.
-check_result(rx_result, "TEST 8: EXTRA STOP RX ACCEPT");
-
-endtask
-
-/////////////////////////////////////////////////////////////
-// TEST 9
-// MULTIPLE BYTES / ORDER
-/////////////////////////////////////////////////////////////
-
-task automatic test_9_multiple_bytes();
-
-logic [7:0] data;
-
-$display("\n========== TEST 9: MULTIPLE BYTES ==========");
-
-reset_dut();
-
-tx_data_bits = data_bits_cfg(8);
-rx_data_bits = data_bits_cfg(8);
-
-for (int i = 0; i < 4; i++) begin
-
-data = 8'h10 + i;
-
-tx_result = 1'b0;
-rx_result = 1'b0;
-
-fork
-
-begin
-automatic logic [7:0] expected = data;
-
-monitor_tx(expected, 8, 0, 0, 0, tx_result);
-end
-
-begin
-automatic logic [7:0] expected = data;
-
-monitor_rx(expected, rx_result);
-end
-
-begin
-automatic logic [7:0] expected = data;
-
-send_tx(expected, 8, 0, 0, 0);
-end
-
-join
-
-check_result(tx_result, $sformatf("TEST 9: BYTE %0d TX expected=%02h", i, data));
-
-check_result(rx_result, $sformatf("TEST 9: BYTE %0d RX expected=%02h", i, data));
-
-// Wait for transmitter to become idle.
-wait (tx_ready === 1'b1);
-
-end
-
-endtask
-
-/////////////////////////////////////////////////////////////
-// TEST 10
-// BAD PARITY
-/////////////////////////////////////////////////////////////
-
-task automatic test_10_bad_parity();
-
-bit bad_parity_result;
-
-$display("\n========== TEST 10: BAD PARITY ==========");
-
-reset_dut();
-
-rx_tb_enable = 1'b1;
-
-rx_data_bits = data_bits_cfg(8);
-rx_parity_en = 1'b1;
-rx_parity_type = 1'b0;
-
-bad_parity_result = 1'b1;
-
-fork
-
-begin
-
-send_uart(8'hA5, 8, 1, 0, 0, 1, // bad_parity
-0 // bad_stop
-);
-
-end
-
-begin
-
-// Wait long enough for the complete corrupted frame
-// to be processed by the receiver.
-repeat (RX_TIMEOUT_CYCLES) begin
-
-@(posedge rx_clk);
-
-if (rx_valid === 1'b1) begin
-
-$error("[%0t] BAD PARITY: rx_valid asserted unexpectedly, data=%02h", $time, rx_data);
-
-bad_parity_result = 1'b0;
-
-break;
-
-end
-
-end
-
-end
-
-join
-
-check_result(bad_parity_result, "TEST 10: BAD PARITY REJECTION");
-
-rx_tb_enable = 1'b0;
-
-endtask
-
-/////////////////////////////////////////////////////////////
-// TEST 11
-// BAD STOP BIT
-/////////////////////////////////////////////////////////////
-
-task automatic test_11_bad_stop();
-
-bit bad_stop_result;
-
-$display("\n========== TEST 11: BAD STOP BIT ==========");
-
-reset_dut();
-
-rx_tb_enable = 1'b1;
-
-rx_data_bits = data_bits_cfg(8);
-rx_parity_en = 1'b0;
-rx_parity_type = 1'b0;
-
-bad_stop_result = 1'b1;
-
-fork
-
-begin
-
-send_uart(8'h5A, 8, 0, 0, 0, 0, // bad_parity
-1 // bad_stop
-);
-
-end
-
-begin
-
-repeat (RX_TIMEOUT_CYCLES) begin
-
-@(posedge rx_clk);
-
-if (rx_valid === 1'b1) begin
-
-$error("[%0t] BAD STOP: rx_valid asserted unexpectedly, data=%02h", $time, rx_data);
-
-bad_stop_result = 1'b0;
-
-break;
-
-end
-
-end
-
-end
-
-join
-
-check_result(bad_stop_result, "TEST 11: BAD STOP REJECTION");
-
-rx_tb_enable = 1'b0;
-
-endtask
-
-/////////////////////////////////////////////////////////////
-// TEST 12
-// TX BACK-TO-BACK
-/////////////////////////////////////////////////////////////
-
-task automatic test_12_tx_back_to_back();
-
-bit result1;
-bit result2;
-
-$display("\n========== TEST 12: TX BACK-TO-BACK ==========");
-
-reset_dut();
-
-tx_data_bits = data_bits_cfg(8);
-tx_parity_en = 1'b0;
-tx_parity_type = 1'b0;
-tx_extra_stop = 1'b0;
-
-fork
-
-begin
-send_tx(8'h11, 8, 0, 0, 0);
-send_tx(8'h22, 8, 0, 0, 0);
-end
-
-begin
-monitor_tx(8'h11, 8, 0, 0, 0, result1);
-monitor_tx(8'h22, 8, 0, 0, 0, result2);
-end
-
-join
-
-check_result(result1, "TEST 12: FIRST BYTE");
-check_result(result2, "TEST 12: SECOND BYTE");
-
-endtask
-
-/////////////////////////////////////////////////////////////
-// TEST 13
-// RX BACK-TO-BACK
-/////////////////////////////////////////////////////////////
-
-task automatic test_13_rx_back_to_back();
-
-bit result1;
-bit result2;
-
-$display("\n========== TEST 13: RX BACK-TO-BACK ==========");
-
-reset_dut();
-
-rx_tb_enable = 1'b1;
-rx_data_bits = data_bits_cfg(8);
-rx_parity_en = 1'b0;
-rx_parity_type = 1'b0;
-
-result1 = 1'b0;
-result2 = 1'b0;
-
-fork
-
-begin
-monitor_rx(8'h11, result1);
-monitor_rx(8'h22, result2);
-end
-
-begin
-send_uart(8'h11, 8, 0, 0, 0);
-send_uart(8'h22, 8, 0, 0, 0);
-end
-
-join
-
-check_result(result1, "TEST 13: FIRST BYTE RX");
-check_result(result2, "TEST 13: SECOND BYTE RX");
-
-rx_tb_enable = 1'b0;
-
-endtask
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
-// MAIN TEST
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
-initial begin
-
-// Initial values
-
-tx_arst_ni = 1'b0;
-rx_arst_ni = 1'b0;
-
-tx_valid = 1'b0;
-tx_data = 8'h00;
-
-tx_data_bits = data_bits_cfg(8);
-tx_parity_en = 1'b0;
-tx_parity_type = 1'b0;
-tx_extra_stop = 1'b0;
-
-rx_data_bits = data_bits_cfg(8);
-rx_parity_en = 1'b0;
-rx_parity_type = 1'b0;
-
-rx_tb_enable = 1'b0;
-rx_tb_line = 1'b1;
-
-// -------------------------------------------------------
-// RUN TESTS
-// -------------------------------------------------------
-
-test_1_reset();
-
-test_2_tx();
-
-test_3_rx();
-
-test_4_loopback();
-
-test_5_data_width();
-
-test_6_even_parity();
-test_6_even_parity_tx();
-test_6_even_parity_rx();
-
-test_7_odd_parity();
-test_7_odd_parity_tx();
-test_7_odd_parity_rx();
-
-test_8_extra_stop();
-
-test_9_multiple_bytes();
-
-test_10_bad_parity();
-
-test_11_bad_stop();
-
-test_12_tx_back_to_back();
-
-test_13_rx_back_to_back();
-
-// -------------------------------------------------------
-// FINAL SUMMARY
-// -------------------------------------------------------
-
-$display("");
-$display("============================================================");
-$display(" UART TESTBENCH SUMMARY");
-$display("============================================================");
-
-$display("TOTAL PASS : %0d", pass_count);
-$display("TOTAL FAIL : %0d", fail_count);
-
-if (fail_count == 0) begin
-
-$display("============================================================");
-$display(" ALL TESTS PASSED");
-$display("============================================================");
-
-end else begin
-
-$display("============================================================");
-$display(" TESTBENCH FAILED");
-$display("============================================================");
-
-end
-
-if (fail_count != 0) $fatal(1, "UART regression failed");
-
-$finish;
-
-end
-
+    $finish;
+  end
 endmodule
