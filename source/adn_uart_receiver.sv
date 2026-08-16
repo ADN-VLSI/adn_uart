@@ -35,10 +35,11 @@ module adn_uart_receiver #(
 );
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
-  // LOCALPARAMS GENERATED
+  // LOCALPARAMS
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
-  localparam int HalfOversample = (OVERSAMPLE / 2) - 1;  // Midpoint for bit sampling
+  // Midpoint for bit sampling. e.g., if OVERSAMPLE=8, HalfOversample=3 (4th clock tick)
+  localparam int HalfOversample = (OVERSAMPLE / 2) - 1;
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   // TYPEDEFS
@@ -52,92 +53,143 @@ module adn_uart_receiver #(
     STATE_STOP
   } state_e;
 
-  state_e current_state, next_state;  // FSM state registers
-
   //////////////////////////////////////////////////////////////////////////////////////////////////
-  // SIGNALS
+  // SIGNALS & REGISTERS
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
-  logic                          rx_s;  // Synchronized RX signal
-  logic [$clog2(OVERSAMPLE)-1:0] sample_cnt;  // Counter for oversampling ticks
-  logic [                   3:0] bit_cnt;  // Tracks number of bits received
-  logic [                   3:0] target_bit_cnt;  // Configured bit count target
-  logic [                   3:0] active_bit_count;  // Number of bits for parity calc
-  logic [                   7:0] rx_shift_reg;  // Shift register for incoming bits
-  logic [                   7:0] aligned_data;  // Data shifted to LSB alignment
-  logic                          rx_parity_bit;  // Captured parity bit
-  logic                          expected_parity;  // Parity calculated from received data
-  logic                          parity_err;  // Flag for parity mismatch
+  state_e state_q, state_next;
+
+  logic [$clog2(OVERSAMPLE)-1:0] sample_cnt_q, sample_cnt_next;
+  logic [2:0] bit_cnt_q, bit_cnt_next;
+  logic [7:0] data_q, data_next;
+  logic parity_err_q, parity_err_next;
+  logic [7:0] data_o_q, data_o_next;
+  logic data_valid_q, data_valid_next;
+
+  logic       rx_s;  // Synchronized RX signal
+
+  // Parity variables
+  logic [3:0] par_calc;
+  logic       expected_parity;
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
-  // ASSIGNMENTS
+  // COMBINATIONAL LOGIC
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // FIX: Sized literal changed to 4 bits to match the updated vector width
-  always_comb target_bit_cnt = 4'd5 + {2'b0, data_bits_i};
-  always_comb active_bit_count = 4'd5 + {2'b0, data_bits_i};
-
-  // Align raw right-shifted LSB-first data into zero-padded LSB positions
+  // 1. Inline Parity Calculation (Optimized from reference code)
   always_comb begin
+    par_calc[0] = ^data_q[4:0];
+    par_calc[1] = par_calc[0] ^ data_q[5];
+    par_calc[2] = par_calc[1] ^ data_q[6];
+    par_calc[3] = par_calc[2] ^ data_q[7];
+
     case (data_bits_i)
-      2'b00:   aligned_data = {3'b0, rx_shift_reg[7:3]};  // 5 bits
-      2'b01:   aligned_data = {2'b0, rx_shift_reg[7:2]};  // 6 bits
-      2'b10:   aligned_data = {1'b0, rx_shift_reg[7:1]};  // 7 bits
-      2'b11:   aligned_data = rx_shift_reg;  // 8 bits
-      default: aligned_data = rx_shift_reg;
+      2'b00:   expected_parity = par_calc[0];  // 5 bits
+      2'b01:   expected_parity = par_calc[1];  // 6 bits
+      2'b10:   expected_parity = par_calc[2];  // 7 bits
+      2'b11:   expected_parity = par_calc[3];  // 8 bits
+      default: expected_parity = par_calc[3];
     endcase
+
+    if (parity_type_i == 1'b1) begin  // Assuming 1 designates ODD parity
+      expected_parity = ~expected_parity;
+    end
   end
 
-  always_comb parity_err = parity_en_i && (rx_parity_bit != expected_parity);
-
-  // FSM Next State Logic
+  // 2. FSM Next-State & Data Path Logic
   always_comb begin
-    next_state = current_state;
+    // Default assignments to prevent latches
+    state_next      = state_q;
+    sample_cnt_next = sample_cnt_q;
+    bit_cnt_next    = bit_cnt_q;
+    data_next       = data_q;
+    parity_err_next = parity_err_q;
+    data_o_next     = data_o_q;
+    data_valid_next = 1'b0;  // Default to 0 so it naturally creates a single-cycle pulse
 
-    case (current_state)
+    // Default sample counter behavior (wraps at OVERSAMPLE-1)
+    if (sample_cnt_q == OVERSAMPLE - 1) begin
+      sample_cnt_next = '0;
+    end else begin
+      sample_cnt_next = sample_cnt_q + 1'b1;
+    end
+
+    case (state_q)
       STATE_IDLE: begin
+        sample_cnt_next = '0;
+        bit_cnt_next    = '0;
+        parity_err_next = 1'b0;
+        data_next       = '0;  // Clear the shift register for new zero-padded frame
+
         if (!rx_s) begin
-          next_state = STATE_START;
+          state_next = STATE_START;
         end
       end
 
       STATE_START: begin
-        if (sample_cnt == HalfOversample) begin
+        if (sample_cnt_q == HalfOversample) begin
           if (!rx_s) begin
-            next_state = STATE_DATA;
+            state_next      = STATE_DATA;
+            sample_cnt_next = '0;  // Re-align sampling phase to the center of the bit
           end else begin
-            next_state = STATE_IDLE;  // False start glitch recovery
+            state_next = STATE_IDLE;  // False start glitch recovery
           end
         end
       end
 
       STATE_DATA: begin
-        if (sample_cnt == OVERSAMPLE - 1) begin
-          if (bit_cnt == target_bit_cnt - 1) begin
+        // Sample data bit exactly at midpoint
+        if (sample_cnt_q == HalfOversample) begin
+          data_next[bit_cnt_q] = rx_s;  // Direct assignment, replaces shift logic
+        end
+
+        // End of the bit period
+        if (sample_cnt_q == OVERSAMPLE - 1) begin
+          if (bit_cnt_q == 3'd4 + {1'b0, data_bits_i}) begin
             if (parity_en_i) begin
-              next_state = STATE_PARITY;
+              state_next = STATE_PARITY;
             end else begin
-              next_state = STATE_STOP;
+              state_next = STATE_STOP;
             end
+          end else begin
+            bit_cnt_next = bit_cnt_q + 1'b1;
           end
         end
       end
 
       STATE_PARITY: begin
-        if (sample_cnt == OVERSAMPLE - 1) begin
-          next_state = STATE_STOP;
+        if (sample_cnt_q == HalfOversample) begin
+          if (rx_s != expected_parity) begin
+            parity_err_next = 1'b1;
+          end
+        end
+
+        if (sample_cnt_q == OVERSAMPLE - 1) begin
+          state_next = STATE_STOP;
         end
       end
 
       STATE_STOP: begin
-        if (sample_cnt == OVERSAMPLE - 1) begin
-          next_state = STATE_IDLE;
+        if (sample_cnt_q == HalfOversample) begin
+          // Assert valid output if stop bit is valid (HIGH) and parity matches
+          if (rx_s && !parity_err_q) begin
+            data_o_next     = data_q;
+            data_valid_next = 1'b1;
+          end
+        end
+
+        if (sample_cnt_q == OVERSAMPLE - 1) begin
+          state_next = STATE_IDLE;
         end
       end
 
-      default: next_state = STATE_IDLE;
+      default: state_next = STATE_IDLE;
     endcase
   end
+
+  // Output assignments
+  always_comb data_o = data_o_q;
+  always_comb data_valid_o = data_valid_q;
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   // SUBMODULES
@@ -147,7 +199,7 @@ module adn_uart_receiver #(
   adn_common_synchronizer #(
       .WIDTH(1),
       .STAGES(2),
-      .RESET_VALUE(1'b1)  // UART line stays HIGH when idle
+      .RESET_VALUE(1'b1)
   ) u_rx_sync (
       .clk_i  (clk_i),
       .arst_ni(arst_ni),
@@ -156,97 +208,27 @@ module adn_uart_receiver #(
       .data_o (rx_s)
   );
 
-  // Generate expected parity for validation
-  adn_parity_generator #(
-      .DATA_WIDTH(8)
-  ) u_parity_gen (
-      .data_i       (aligned_data),
-      .valid_bits_i (active_bit_count),
-      .parity_type_i(parity_type_i),
-      .parity_o     (expected_parity)
-  );
-
-
   //////////////////////////////////////////////////////////////////////////////////////////////////
   // SEQUENTIALS
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // FSM State Register
   always_ff @(posedge clk_i or negedge arst_ni) begin
     if (!arst_ni) begin
-      current_state <= STATE_IDLE;
+      state_q      <= STATE_IDLE;
+      sample_cnt_q <= '0;
+      bit_cnt_q    <= '0;
+      data_q       <= '0;
+      parity_err_q <= 1'b0;
+      data_o_q     <= '0;
+      data_valid_q <= 1'b0;
     end else begin
-      current_state <= next_state;
-    end
-  end
-
-  // Data path and control logic
-  always_ff @(posedge clk_i or negedge arst_ni) begin
-    if (!arst_ni) begin
-      sample_cnt    <= '0;
-      bit_cnt       <= '0;
-      rx_shift_reg  <= '0;
-      rx_parity_bit <= 1'b0;
-      data_o        <= '0;
-      data_valid_o  <= 1'b0;
-    end else begin
-      data_valid_o <= 1'b0;  // Default pulse suppression
-
-      case (current_state)
-        STATE_IDLE: begin
-          sample_cnt <= '0;
-          bit_cnt    <= '0;
-        end
-
-        STATE_START: begin
-          if (sample_cnt == HalfOversample) begin
-            sample_cnt <= '0;  // Re-align sampling phase to bit center
-          end else begin
-            sample_cnt <= sample_cnt + 1'b1;
-          end
-        end
-
-        STATE_DATA: begin
-          if (sample_cnt == OVERSAMPLE - 1) begin
-            sample_cnt <= '0;
-            bit_cnt    <= bit_cnt + 1'b1;
-          end else begin
-            sample_cnt <= sample_cnt + 1'b1;
-          end
-
-          // Sample data bit at midpoint
-          if (sample_cnt == HalfOversample) begin
-            rx_shift_reg <= {rx_s, rx_shift_reg[7:1]};
-          end
-        end
-
-        STATE_PARITY: begin
-          if (sample_cnt == OVERSAMPLE - 1) begin
-            sample_cnt <= '0;
-          end else begin
-            sample_cnt <= sample_cnt + 1'b1;
-          end
-
-          // Sample parity bit at midpoint
-          if (sample_cnt == HalfOversample) begin
-            rx_parity_bit <= rx_s;
-          end
-        end
-
-        STATE_STOP: begin
-          if (sample_cnt == OVERSAMPLE - 1) begin
-            sample_cnt <= '0;
-
-            // Assert valid output if stop bit is valid (HIGH) and parity matches
-            if (rx_s && !parity_err) begin
-              data_o       <= aligned_data;
-              data_valid_o <= 1'b1;
-            end
-          end else begin
-            sample_cnt <= sample_cnt + 1'b1;
-          end
-        end
-      endcase
+      state_q      <= state_next;
+      sample_cnt_q <= sample_cnt_next;
+      bit_cnt_q    <= bit_cnt_next;
+      data_q       <= data_next;
+      parity_err_q <= parity_err_next;
+      data_o_q     <= data_o_next;
+      data_valid_q <= data_valid_next;
     end
   end
 
