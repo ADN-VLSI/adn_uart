@@ -291,4 +291,3 @@ module adn_uart_register_interface #(
   end
 
 endmodule
-
