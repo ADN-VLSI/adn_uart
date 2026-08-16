@@ -1,8 +1,14 @@
 /*
 
-@foez-bhai, write the purpose of this module in markdown format here. This is already in multi-line comment, so don't add any additional comment syntax.
+The `adn_uart_register_interface` module serves as the primary bridge between a system-level bus interface (such as APB) and the internal UART hardware components. It maps control, configuration, status, and data registers to specific memory addresses, enabling software to manage UART operations, monitor FIFO status, handle arbitration requests, and configure communication parameters like clock division and parity.
 
-@foez-bhai, describe the use case of this module in markdown format here. This is already in multi-line comment, so don't add any additional comment syntax.
+### Use Case
+The `adn_uart_register_interface` acts as the memory-mapped control layer for the UART peripheral. Its primary use cases include:
+- **Configuration:** Allowing software to set baud rates (via clock division/prescalers) and frame formats (data bits, parity, stop bits).
+- **Control:** Providing a mechanism to trigger software resets, flush FIFOs, and enable/disable the transmitter and receiver.
+- **Data Transfer:** Facilitating the movement of data between the system bus and the TX/RX FIFOs.
+- **Status Monitoring:** Exposing real-time FIFO occupancy and status flags to the CPU.
+- **Arbitration:** Managing request/grant handshakes for multi-master or multi-client UART access scenarios.
 
 | REVISION | DATE       | AUTHOR              | DESCRIPTION                                            |
 |----------|------------|---------------------|--------------------------------------------------------|
@@ -17,22 +23,21 @@ See LICENSE file in the project root for full license information
 
 */
 
-// @foez-bhai, add comments to the parameters, ports
 module adn_uart_register_interface #(
-    parameter int ADDR_WIDTH = 32,
-    parameter int DATA_WIDTH = 32,
+    parameter int ADDR_WIDTH = 32, // Width of the register address bus
+    parameter int DATA_WIDTH = 32, // Width of the register data bus
 
     // Default UART Configuration Reset Values
-    parameter logic [11:0] RST_CLK_DIV   = 12'h05B,
-    parameter logic [ 3:0] RST_PRESCALER = 4'h4,
-    parameter logic [ 1:0] RST_DATA_BITS = 2'h3,
-    parameter logic        RST_PARITY_EN = 1'b0,
-    parameter logic        RST_PARITY_TY = 1'b0,
-    parameter logic        RST_STOP_BITS = 1'b0
+    parameter logic [11:0] RST_CLK_DIV   = 12'h05B, // Reset value for clock divider
+    parameter logic [ 3:0] RST_PRESCALER = 4'h4,    // Reset value for prescaler
+    parameter logic [ 1:0] RST_DATA_BITS = 2'h3,    // Reset value for data bits configuration
+    parameter logic        RST_PARITY_EN = 1'b0,    // Reset value for parity enable
+    parameter logic        RST_PARITY_TY = 1'b0,    // Reset value for parity type
+    parameter logic        RST_STOP_BITS = 1'b0     // Reset value for stop bits configuration
 ) (
     // Global Signals
-    input logic clk,
-    input logic rst_n,
+    input logic clk,   // System clock
+    input logic rst_n, // Active-low asynchronous reset
 
     // Internal Bus Interface
     input  logic [ADDR_WIDTH-1:0] reg_addr,
