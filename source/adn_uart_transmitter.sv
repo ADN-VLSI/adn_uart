@@ -142,7 +142,7 @@ module adn_uart_transmitter #(
       .DATA_WIDTH(8)
   ) u_parity_gen (
       .data_i              (data_i),
-      .parity_valid_bits_i (nbits_d),
+      .num_bits_i          (nbits_d),
       .parity_type_i       (parity_type_i),
       .parity_o            (parity_bit_w)
   );
