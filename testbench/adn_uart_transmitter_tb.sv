@@ -1,25 +1,24 @@
 /*
 
-| TEST CASE | DATE       | AUTHOR             | DESCRIPTION                                            |
+| TEST CASE | DATE       | AUTHOR             | DESCRIPTION                                             |
 |-----------|------------|--------------------|---------------------------------------------------------|
-| TC_001    | 2026-08-25 | Adnan Sami Anirban | 8N1, no parity, no extra stop                          |
-| TC_002    | 2026-08-25 | Adnan Sami Anirban | 7 bits, even parity, extra stop bit                    |
-| TC_003    | 2026-08-25 | Adnan Sami Anirban | 6 bits, odd parity, no extra stop                      |
-| TC_004    | 2026-08-25 | Adnan Sami Anirban | 5 bits, no parity, extra stop                          |
-| TC_005    | 2026-08-25 | Adnan Sami Anirban | All-zero data across each width                        |
-| TC_006    | 2026-08-25 | Adnan Sami Anirban | All-ones data across each width (checks bit masking)   |
+| TC_001    | 2026-08-25 | Adnan Sami Anirban | 8N1, no parity, no extra stop                           |
+| TC_002    | 2026-08-25 | Adnan Sami Anirban | 7 bits, even parity, extra stop bit                     |
+| TC_003    | 2026-08-25 | Adnan Sami Anirban | 6 bits, odd parity, no extra stop                       |
+| TC_004    | 2026-08-25 | Adnan Sami Anirban | 5 bits, no parity, extra stop                           |
+| TC_005    | 2026-08-25 | Adnan Sami Anirban | All-zero data across each width                         |
+| TC_006    | 2026-08-25 | Adnan Sami Anirban | All-ones data across each width (checks bit masking)    |
 | TC_007    | 2026-08-25 | Adnan Sami Anirban | Parity off / even / odd, fixed data, 8 bits             |
-| TC_008    | 2026-08-25 | Adnan Sami Anirban | 1 stop bit vs 2 stop bits, isolated                    |
+| TC_008    | 2026-08-25 | Adnan Sami Anirban | 1 stop bit vs 2 stop bits, isolated                     |
 | TC_009    | 2026-08-25 | Adnan Sami Anirban | Back-to-back frames, no idle gap between                |
 | TC_010    | 2026-08-25 | Adnan Sami Anirban | Min data width (5b) combined with parity + extra stop   |
-| TC_011    | 2026-08-25 | Adnan Sami Anirban | Randomized sweep across all configs                    |
+| TC_011    | 2026-08-25 | Adnan Sami Anirban | Randomized sweep across all configs                     |
 
-| REVISION | DATE       | AUTHOR             | DESCRIPTION                                             |
+| REVISION | DATE       | AUTHOR             | DESCRIPTION                                              |
 |----------|------------|--------------------|----------------------------------------------------------|
 | 0.1      | 2026-08-24 | Adnan Sami Anirban | Initial version                                          |
-| 0.2      | 2026-08-25 | Adnan Sami Anirban | Fixed duplicate clock source                             |
-| 0.3      | 2026-08-25 | Adnan Sami Anirban | Fixed signed/unsigned comparison bug (byte -> logic[7:0])|
-| 0.4      | 2026-08-25 | Adnan Sami Anirban | Restructured into per-tc tasks, TN plusarg dispatch      |
+| 0.2      | 2026-08-25 | Adnan Sami Anirban | Stable version                                           |
+
 
 Author : Adnan Sami Anirban (adnananirban259@gmail.com)
 This file is part of ADN-VLSI/adn_uart
