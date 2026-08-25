@@ -1,1 +1,3 @@
 ci_simulate dummy_tb default 0
+ci_simulate adn_uart_transmitter_tb TC_ALL 0
+
