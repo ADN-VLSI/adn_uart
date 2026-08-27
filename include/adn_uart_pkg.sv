@@ -20,7 +20,7 @@ package adn_uart_pkg;
   parameter logic [11:0] UART_RXD_OFFSET = 12'h02C;
   parameter logic [11:0] UART_INT_EN_OFFSET = 12'h030;
 
-  // UART_CTRL — offset 0x00 | RW 
+  // UART_CTRL — offset 0x00 | RW
   // [31:5] reserved | [4] rx_en | [3] tx_en | [2] rx_fifo_flush | [1] tx_fifo_flush | [0] uart_rst
   typedef struct packed {
     logic [26:0] reserved;
