@@ -12,64 +12,43 @@
 
 |Name|Type|Dimension|Default|Description|
 |-|-|-|-|-|
-|ADDR_WIDTH|int||32|Width of the register address bus|
-|DATA_WIDTH|int||32|Width of the register data bus|
-|RST_CLK_DIV|logic [11:0]||12'h05B|Reset value for clock divider|
-|RST_PRESCALER|logic [ 3:0]||4'h4|Reset value for prescaler|
-|RST_DATA_BITS|logic [ 1:0]||2'h3|Reset value for data bits configuration|
-|RST_PARITY_EN|logic||1'b0|Reset value for parity enable|
-|RST_PARITY_TY|logic||1'b0|Reset value for parity type|
-|RST_STOP_BITS|logic||1'b0|Reset value for stop bits configuration|
+|ADDR_WIDTH|int||32||
+|DATA_WIDTH|int||32||
 
 
 ## Ports
 
 |Name|Direction|Type|Dimension|Description|
 |-|-|-|-|-|
-|clk|input|logic||System clock|
-|rst_n|input|logic||Active-low asynchronous reset|
-|reg_addr|input|logic [ADDR_WIDTH-1:0]||Internal Bus Interface|
-|reg_wdata|input|logic [DATA_WIDTH-1:0]|||
-|reg_write_en|input|logic|||
-|reg_read_en|input|logic|||
-|reg_rdata|output|logic [DATA_WIDTH-1:0]|||
-|reg_ready|output|logic|||
-|reg_error|output|logic|||
-|uart_sw_rst|output|logic||Hardware Control Outputs (UART_CTRL)|
-|tx_fifo_flush|output|logic|||
-|rx_fifo_flush|output|logic|||
-|tx_en|output|logic|||
-|rx_en|output|logic|||
-|clk_div|output|logic [11:0]||Hardware Configuration Outputs (UART_CFG)|
-|prescaler|output|logic [ 3:0]|||
-|data_bits|output|logic [ 1:0]|||
-|parity_en|output|logic|||
-|parity_type|output|logic|||
-|stop_bits|output|logic|||
-|tx_data_cnt|input|logic [9:0]||Status Inputs (UART_STAT)|
-|rx_data_cnt|input|logic [9:0]|||
-|tx_fifo_empty|input|logic|||
-|tx_fifo_full|input|logic|||
-|rx_fifo_empty|input|logic|||
-|rx_fifo_full|input|logic|||
-|tx_fifo_wdata|output|logic [7:0]||TX Datapath (UART_TXD)|
-|tx_fifo_push|output|logic|||
-|rx_fifo_rdata|input|logic [7:0]||RX Datapath (UART_RXD)|
-|rx_fifo_pop|output|logic|||
-|tx_access_req_id|output|logic [7:0]||TX Arbitration (UART_TXR, UART_TXGP, UART_TXG)|
-|tx_req_valid|output|logic|||
-|tx_grant_id|input|logic [7:0]|||
-|tx_grant_valid|input|logic|||
-|tx_grant_pop|output|logic|||
-|rx_access_req_id|output|logic [7:0]||RX Arbitration (UART_RXR, UART_RXGP, UART_RXG)|
-|rx_req_valid|output|logic|||
-|rx_grant_id|input|logic [7:0]|||
-|rx_grant_valid|input|logic|||
-|rx_grant_pop|output|logic|||
-|tx_fifo_empty_int_en|output|logic||Interrupts (UART_INT)|
-|tx_fifo_full_int_en|output|logic|||
-|rx_fifo_empty_int_en|output|logic|||
-|rx_fifo_full_int_en|output|logic|||
+|clk_i|input|logic|||
+|arst_ni|input|logic|||
+|pmi_req_i|input|pmi_req_t||Pipelined Memory Interface (PMI)|
+|pmi_rsp_o|output|pmi_rsp_t|||
+|uart_ctrl_o|output|uart_ctrl_reg_t||Hardware Struct Outputs|
+|uart_cfg_o|output|uart_cfg_reg_t|||
+|uart_stat_o|output|uart_stat_reg_t|||
+|uart_int_en_o|output|uart_int_reg_t|||
+|tx_data_o|output|uart_data_t||TX Datapath (Valid/Ready)|
+|tx_data_valid_o|output|logic|||
+|tx_data_ready_i|input|logic|||
+|rx_data_i|input|uart_data_t||RX Datapath (Valid/Ready)|
+|rx_data_valid_i|input|logic|||
+|rx_data_ready_o|output|logic|||
+|tx_req_id_o|output|uart_id_t||TX Arbitration Request (Valid/Ready Enqueue)|
+|tx_req_valid_o|output|logic|||
+|tx_req_ready_i|input|logic|||
+|tx_grant_id_i|input|uart_id_t||TX Arbitration Grant (Valid/Ready Dequeue)|
+|tx_grant_valid_i|input|logic|||
+|tx_grant_ready_o|output|logic|||
+|rx_req_id_o|output|uart_id_t||RX Arbitration Request (Valid/Ready Enqueue)|
+|rx_req_valid_o|output|logic|||
+|rx_req_ready_i|input|logic|||
+|rx_grant_id_i|input|uart_id_t||RX Arbitration Grant (Valid/Ready Dequeue)|
+|rx_grant_valid_i|input|logic|||
+|rx_grant_ready_o|output|logic|||
+|tx_data_cnt_i|input|uart_count_t||Status & Idle Monitoring|
+|rx_data_cnt_i|input|uart_count_t|||
+|tx_uart_idle_i|input|logic|||
 
 
 ## Description
