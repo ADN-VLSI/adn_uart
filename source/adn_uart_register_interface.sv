@@ -24,7 +24,7 @@ See LICENSE file in the project root for full license information
 */
 
 `include "adn_uart_pkg.sv"
-`include "typedef.svh"
+`include "pmi/typedef.svh"
 
 module adn_uart_register_interface
   import adn_uart_pkg::*;
