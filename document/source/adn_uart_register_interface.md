@@ -22,13 +22,15 @@
 |-|-|-|-|-|
 |clk_i|input|logic|||
 |arst_ni|input|logic|||
-|reg_addr_i|input|logic [ADDR_WIDTH-1:0]||Standalone Custom Bus Interface|
-|reg_wdata_i|input|logic [DATA_WIDTH-1:0]|||
-|reg_wen_i|input|logic|||
-|reg_ren_i|input|logic|||
-|reg_rdata_o|output|logic [DATA_WIDTH-1:0]|||
-|reg_ready_o|output|logic|||
-|reg_error_o|output|logic|||
+|pmi_mreq_i|input|logic||Pipelined Memory Interface (PMI)|
+|pmi_maddr_i|input|logic [ ADDR_WIDTH-1:0]|||
+|pmi_mwe_i|input|logic|||
+|pmi_mwdata_i|input|logic [ DATA_WIDTH-1:0]|||
+|pmi_mstrb_i|input|logic [(DATA_WIDTH/8)-1:0]|||
+|pmi_mgnt_o|output|logic|||
+|pmi_mack_o|output|logic|||
+|pmi_mrdata_o|output|logic [ DATA_WIDTH-1:0]|||
+|pmi_mresp_o|output|logic|||
 |uart_ctrl_o|output|uart_ctrl_reg_t||Hardware Struct Outputs|
 |uart_cfg_o|output|uart_cfg_reg_t|||
 |uart_stat_o|output|uart_stat_reg_t|||
