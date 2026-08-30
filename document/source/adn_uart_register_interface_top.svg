@@ -1,95 +1,65 @@
-<svg height="1740" width="1740" xmlns="http://www.w3.org/2000/svg">
+<svg height="1190" width="1190" xmlns="http://www.w3.org/2000/svg">
 <rect width="100%" height="100%" x="0" y="0" style="fill:white;stroke:white;stroke-width:0"/>
 <g style="fill:white;stroke:black;stroke-width:1">
-<rect width="1625" height="1625" x="60" y="60"/>
-<polygon points="10,695 10,685 30,685 40,695 60,695 40,695 30,705 10,705 10,695"/>
-<text x="65" y="685" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">clk</text>
-<polygon points="10,745 10,735 30,735 40,745 60,745 40,745 30,755 10,755 10,745"/>
-<text x="65" y="735" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">rst_n</text>
+<rect width="1075" height="1075" x="60" y="60"/>
+<polygon points="10,95 10,85 30,85 40,95 60,95 40,95 30,105 10,105 10,95"/>
+<text x="65" y="85" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">clk_i</text>
+<polygon points="10,145 10,135 30,135 40,145 60,145 40,145 30,155 10,155 10,145"/>
+<text x="65" y="135" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">arst_ni</text>
+<polygon points="10,245 10,235 30,235 40,245 60,245 40,245 30,255 10,255 10,245"/>
+<text x="65" y="235" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">pmi_req_i</text>
+<polygon points="10,295 20,285 40,285 40,295 60,295 40,295 40,305 20,305 10,295"/>
+<text x="65" y="285" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">pmi_rsp_o</text>
+<polygon points="10,395 10,385 30,385 40,395 60,395 40,395 30,405 10,405 10,395"/>
+<text x="65" y="385" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_data_i</text>
+<polygon points="10,445 10,435 30,435 40,445 60,445 40,445 30,455 10,455 10,445"/>
+<text x="65" y="435" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_data_valid_i</text>
+<polygon points="10,495 20,485 40,485 40,495 60,495 40,495 40,505 20,505 10,495"/>
+<text x="65" y="485" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_data_ready_o</text>
+<polygon points="10,595 10,585 30,585 40,595 60,595 40,595 30,605 10,605 10,595"/>
+<text x="65" y="585" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_grant_id_i</text>
+<polygon points="10,645 10,635 30,635 40,645 60,645 40,645 30,655 10,655 10,645"/>
+<text x="65" y="635" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_grant_valid_i</text>
+<polygon points="10,695 20,685 40,685 40,695 60,695 40,695 40,705 20,705 10,695"/>
+<text x="65" y="685" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_grant_ready_o</text>
+<polygon points="10,795 10,785 30,785 40,795 60,795 40,795 30,805 10,805 10,795"/>
+<text x="65" y="785" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_grant_id_i</text>
 <polygon points="10,845 10,835 30,835 40,845 60,845 40,845 30,855 10,855 10,845"/>
-<text x="65" y="835" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">reg_addr</text>
-<polygon points="10,895 10,885 30,885 40,895 60,895 40,895 30,905 10,905 10,895"/>
-<text x="65" y="885" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">reg_wdata</text>
-<polygon points="10,945 10,935 30,935 40,945 60,945 40,945 30,955 10,955 10,945"/>
-<text x="65" y="935" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">reg_write_en</text>
+<text x="65" y="835" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_grant_valid_i</text>
+<polygon points="10,895 20,885 40,885 40,895 60,895 40,895 40,905 20,905 10,895"/>
+<text x="65" y="885" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_grant_ready_o</text>
 <polygon points="10,995 10,985 30,985 40,995 60,995 40,995 30,1005 10,1005 10,995"/>
-<text x="65" y="985" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">reg_read_en</text>
-<polygon points="10,1045 20,1035 40,1035 40,1045 60,1045 40,1045 40,1055 20,1055 10,1045"/>
-<text x="65" y="1035" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">reg_rdata</text>
-<polygon points="10,1095 20,1085 40,1085 40,1095 60,1095 40,1095 40,1105 20,1105 10,1095"/>
-<text x="65" y="1085" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">reg_ready</text>
-<polygon points="10,1145 20,1135 40,1135 40,1145 60,1145 40,1145 40,1155 20,1155 10,1145"/>
-<text x="65" y="1135" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">reg_error</text>
-<polygon points="10,1245 10,1235 30,1235 40,1245 60,1245 40,1245 30,1255 10,1255 10,1245"/>
-<text x="65" y="1235" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_data_cnt</text>
-<polygon points="10,1295 10,1285 30,1285 40,1295 60,1295 40,1295 30,1305 10,1305 10,1295"/>
-<text x="65" y="1285" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_data_cnt</text>
-<polygon points="10,1345 10,1335 30,1335 40,1345 60,1345 40,1345 30,1355 10,1355 10,1345"/>
-<text x="65" y="1335" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_fifo_empty</text>
-<polygon points="10,1395 10,1385 30,1385 40,1395 60,1395 40,1395 30,1405 10,1405 10,1395"/>
-<text x="65" y="1385" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_fifo_full</text>
-<polygon points="10,1445 10,1435 30,1435 40,1445 60,1445 40,1445 30,1455 10,1455 10,1445"/>
-<text x="65" y="1435" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_fifo_empty</text>
-<polygon points="10,1495 10,1485 30,1485 40,1495 60,1495 40,1495 30,1505 10,1505 10,1495"/>
-<text x="65" y="1485" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_fifo_full</text>
-<polygon points="10,1595 10,1585 30,1585 40,1595 60,1595 40,1595 30,1605 10,1605 10,1595"/>
-<text x="65" y="1585" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_fifo_rdata</text>
-<polygon points="10,1645 20,1635 40,1635 40,1645 60,1645 40,1645 40,1655 20,1655 10,1645"/>
-<text x="65" y="1635" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_fifo_pop</text>
-<polygon points="1685,95 1705,95 1705,85 1725,85 1735,95 1725,105 1705,105 1705,95 1685,95"/>
-<text x="1680" y="85" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">uart_sw_rst</text>
-<polygon points="1685,145 1705,145 1705,135 1725,135 1735,145 1725,155 1705,155 1705,145 1685,145"/>
-<text x="1680" y="135" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_fifo_flush</text>
-<polygon points="1685,195 1705,195 1705,185 1725,185 1735,195 1725,205 1705,205 1705,195 1685,195"/>
-<text x="1680" y="185" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_fifo_flush</text>
-<polygon points="1685,245 1705,245 1705,235 1725,235 1735,245 1725,255 1705,255 1705,245 1685,245"/>
-<text x="1680" y="235" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_en</text>
-<polygon points="1685,295 1705,295 1705,285 1725,285 1735,295 1725,305 1705,305 1705,295 1685,295"/>
-<text x="1680" y="285" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_en</text>
-<polygon points="1685,395 1705,395 1705,385 1725,385 1735,395 1725,405 1705,405 1705,395 1685,395"/>
-<text x="1680" y="385" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">clk_div</text>
-<polygon points="1685,445 1705,445 1705,435 1725,435 1735,445 1725,455 1705,455 1705,445 1685,445"/>
-<text x="1680" y="435" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">prescaler</text>
-<polygon points="1685,495 1705,495 1705,485 1725,485 1735,495 1725,505 1705,505 1705,495 1685,495"/>
-<text x="1680" y="485" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">data_bits</text>
-<polygon points="1685,545 1705,545 1705,535 1725,535 1735,545 1725,555 1705,555 1705,545 1685,545"/>
-<text x="1680" y="535" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">parity_en</text>
-<polygon points="1685,595 1705,595 1705,585 1725,585 1735,595 1725,605 1705,605 1705,595 1685,595"/>
-<text x="1680" y="585" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">parity_type</text>
-<polygon points="1685,645 1705,645 1705,635 1725,635 1735,645 1725,655 1705,655 1705,645 1685,645"/>
-<text x="1680" y="635" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">stop_bits</text>
-<polygon points="1685,745 1705,745 1705,735 1725,735 1735,745 1725,755 1705,755 1705,745 1685,745"/>
-<text x="1680" y="735" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_fifo_wdata</text>
-<polygon points="1685,795 1705,795 1705,785 1725,785 1735,795 1725,805 1705,805 1705,795 1685,795"/>
-<text x="1680" y="785" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_fifo_push</text>
-<polygon points="1685,895 1705,895 1705,885 1725,885 1735,895 1725,905 1705,905 1705,895 1685,895"/>
-<text x="1680" y="885" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_access_req_id</text>
-<polygon points="1685,945 1705,945 1705,935 1725,935 1735,945 1725,955 1705,955 1705,945 1685,945"/>
-<text x="1680" y="935" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_req_valid</text>
-<polygon points="1685,995 1705,995 1715,985 1735,985 1735,995 1735,1005 1715,1005 1705,995 1685,995"/>
-<text x="1680" y="985" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_grant_id</text>
-<polygon points="1685,1045 1705,1045 1715,1035 1735,1035 1735,1045 1735,1055 1715,1055 1705,1045 1685,1045"/>
-<text x="1680" y="1035" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_grant_valid</text>
-<polygon points="1685,1095 1705,1095 1705,1085 1725,1085 1735,1095 1725,1105 1705,1105 1705,1095 1685,1095"/>
-<text x="1680" y="1085" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_grant_pop</text>
-<polygon points="1685,1195 1705,1195 1705,1185 1725,1185 1735,1195 1725,1205 1705,1205 1705,1195 1685,1195"/>
-<text x="1680" y="1185" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_access_req_id</text>
-<polygon points="1685,1245 1705,1245 1705,1235 1725,1235 1735,1245 1725,1255 1705,1255 1705,1245 1685,1245"/>
-<text x="1680" y="1235" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_req_valid</text>
-<polygon points="1685,1295 1705,1295 1715,1285 1735,1285 1735,1295 1735,1305 1715,1305 1705,1295 1685,1295"/>
-<text x="1680" y="1285" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_grant_id</text>
-<polygon points="1685,1345 1705,1345 1715,1335 1735,1335 1735,1345 1735,1355 1715,1355 1705,1345 1685,1345"/>
-<text x="1680" y="1335" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_grant_valid</text>
-<polygon points="1685,1395 1705,1395 1705,1385 1725,1385 1735,1395 1725,1405 1705,1405 1705,1395 1685,1395"/>
-<text x="1680" y="1385" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_grant_pop</text>
-<polygon points="1685,1495 1705,1495 1705,1485 1725,1485 1735,1495 1725,1505 1705,1505 1705,1495 1685,1495"/>
-<text x="1680" y="1485" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_fifo_empty_int_en</text>
-<polygon points="1685,1545 1705,1545 1705,1535 1725,1535 1735,1545 1725,1555 1705,1555 1705,1545 1685,1545"/>
-<text x="1680" y="1535" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_fifo_full_int_en</text>
-<polygon points="1685,1595 1705,1595 1705,1585 1725,1585 1735,1595 1725,1605 1705,1605 1705,1595 1685,1595"/>
-<text x="1680" y="1585" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_fifo_empty_int_en</text>
-<polygon points="1685,1645 1705,1645 1705,1635 1725,1635 1735,1645 1725,1655 1705,1655 1705,1645 1685,1645"/>
-<text x="1680" y="1635" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_fifo_full_int_en</text>
-<text x="872" y="1700" dominant-baseline="hanging" text-anchor="middle" font-size="30" style="fill:black;stroke:black;stroke-width:0">adn_uart_register_interface</text>
+<text x="65" y="985" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_data_cnt_i</text>
+<polygon points="10,1045 10,1035 30,1035 40,1045 60,1045 40,1045 30,1055 10,1055 10,1045"/>
+<text x="65" y="1035" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_data_cnt_i</text>
+<polygon points="10,1095 10,1085 30,1085 40,1095 60,1095 40,1095 30,1105 10,1105 10,1095"/>
+<text x="65" y="1085" dominant-baseline="hanging" text-anchor="start" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_uart_idle_i</text>
+<polygon points="1135,345 1155,345 1155,335 1175,335 1185,345 1175,355 1155,355 1155,345 1135,345"/>
+<text x="1130" y="335" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">uart_ctrl_o</text>
+<polygon points="1135,395 1155,395 1155,385 1175,385 1185,395 1175,405 1155,405 1155,395 1135,395"/>
+<text x="1130" y="385" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">uart_cfg_o</text>
+<polygon points="1135,445 1155,445 1155,435 1175,435 1185,445 1175,455 1155,455 1155,445 1135,445"/>
+<text x="1130" y="435" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">uart_stat_o</text>
+<polygon points="1135,495 1155,495 1155,485 1175,485 1185,495 1175,505 1155,505 1155,495 1135,495"/>
+<text x="1130" y="485" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">uart_int_en_o</text>
+<polygon points="1135,595 1155,595 1155,585 1175,585 1185,595 1175,605 1155,605 1155,595 1135,595"/>
+<text x="1130" y="585" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_data_o</text>
+<polygon points="1135,645 1155,645 1155,635 1175,635 1185,645 1175,655 1155,655 1155,645 1135,645"/>
+<text x="1130" y="635" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_data_valid_o</text>
+<polygon points="1135,695 1155,695 1165,685 1185,685 1185,695 1185,705 1165,705 1155,695 1135,695"/>
+<text x="1130" y="685" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_data_ready_i</text>
+<polygon points="1135,795 1155,795 1155,785 1175,785 1185,795 1175,805 1155,805 1155,795 1135,795"/>
+<text x="1130" y="785" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_req_id_o</text>
+<polygon points="1135,845 1155,845 1155,835 1175,835 1185,845 1175,855 1155,855 1155,845 1135,845"/>
+<text x="1130" y="835" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_req_valid_o</text>
+<polygon points="1135,895 1155,895 1165,885 1185,885 1185,895 1185,905 1165,905 1155,895 1135,895"/>
+<text x="1130" y="885" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">tx_req_ready_i</text>
+<polygon points="1135,995 1155,995 1155,985 1175,985 1185,995 1175,1005 1155,1005 1155,995 1135,995"/>
+<text x="1130" y="985" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_req_id_o</text>
+<polygon points="1135,1045 1155,1045 1155,1035 1175,1035 1185,1045 1175,1055 1155,1055 1155,1045 1135,1045"/>
+<text x="1130" y="1035" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_req_valid_o</text>
+<polygon points="1135,1095 1155,1095 1165,1085 1185,1085 1185,1095 1185,1105 1165,1105 1155,1095 1135,1095"/>
+<text x="1130" y="1085" dominant-baseline="hanging" text-anchor="end" font-size="20" style="fill:black;stroke:black;stroke-width:0">rx_req_ready_i</text>
+<text x="597" y="1150" dominant-baseline="hanging" text-anchor="middle" font-size="30" style="fill:black;stroke:black;stroke-width:0">adn_uart_register_interface</text>
 </g>
 </svg>
