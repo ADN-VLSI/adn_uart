@@ -29,8 +29,10 @@ See LICENSE file in the project root for full license information
 module adn_uart_register_interface
   import adn_uart_pkg::*;
 #(
-    parameter int ADDR_WIDTH = 32,
-    parameter int DATA_WIDTH = 32
+    parameter int  ADDR_WIDTH = 32,
+    parameter int  DATA_WIDTH = 32,
+    parameter type pmi_req_t  = logic,
+    parameter type pmi_rsp_t  = logic
 ) (
     input logic clk_i,
     input logic arst_ni,
