@@ -24,6 +24,7 @@ See LICENSE file in the project root for full license information
 */
 
 `include "adn_uart_pkg.sv"
+`include "typedef.svh"
 
 module adn_uart_register_interface
   import adn_uart_pkg::*;
@@ -35,15 +36,8 @@ module adn_uart_register_interface
     input logic arst_ni,
 
     // Pipelined Memory Interface (PMI)
-    input  logic                      pmi_mreq_i,
-    input  logic [    ADDR_WIDTH-1:0] pmi_maddr_i,
-    input  logic                      pmi_mwe_i,
-    input  logic [    DATA_WIDTH-1:0] pmi_mwdata_i,
-    input  logic [(DATA_WIDTH/8)-1:0] pmi_mstrb_i,
-    output logic                      pmi_mgnt_o,
-    output logic                      pmi_mack_o,
-    output logic [    DATA_WIDTH-1:0] pmi_mrdata_o,
-    output logic                      pmi_mresp_o,
+    input  pmi_req_t pmi_req_i,
+    output pmi_rsp_t pmi_rsp_o,
 
     // Hardware Struct Outputs
     output uart_ctrl_reg_t uart_ctrl_o,
@@ -88,36 +82,34 @@ module adn_uart_register_interface
 );
 
   //////////////////////////////////////////////////////////////////////////////
-  // INTERNAL SIGNALS & PMI MAPPING
+  // INTERNAL SIGNALS
   //////////////////////////////////////////////////////////////////////////////
-  logic write_error;
-  logic read_error;
+  logic                  write_error;
+  logic                  read_error;
 
-  logic reg_wen_i;
-  logic reg_ren_i;
-  logic [ADDR_WIDTH-1:0] reg_addr_i;
-  logic [DATA_WIDTH-1:0] reg_wdata_i;
+  logic [DATA_WIDTH-1:0] reg_rdata;
+  logic                  reg_wen;
+  logic                  reg_ren;
+  logic [          11:0] reg_addr;
 
-  // PMI 0-Wait State Request/Response Mapping
-  // Per PMI PR-3, PR-9, PR-14: we can grant and ack in the same cycle.
+  // PMI Aliasing & No-op logic (PR-15 compliance for mstrb==0)
+  assign reg_wen  = pmi_req_i.mreq && pmi_req_i.mwe && (|pmi_req_i.mstrb);
+  assign reg_ren  = pmi_req_i.mreq && !pmi_req_i.mwe;
+  assign reg_addr = pmi_req_i.maddr[11:0];
+
+  // PMI Response - 0-wait state logic
   always_comb begin
-    pmi_mgnt_o  = 1'b1;  // Always ready to accept new requests
-    pmi_mack_o  = pmi_mreq_i;  // Responses complete in the same cycle
-
-    // Alias signals to preserve internal decode logic
-    reg_wen_i   = pmi_mreq_i & pmi_mwe_i;
-    reg_ren_i   = pmi_mreq_i & ~pmi_mwe_i;
-    reg_addr_i  = pmi_maddr_i;
-    reg_wdata_i = pmi_mwdata_i;
-
-    // PMI Response Code: 0 = OKAY, 1 = ERROR
-    pmi_mresp_o = reg_wen_i ? write_error : (reg_ren_i ? read_error : 1'b0);
+    pmi_rsp_o.mgnt   = 1'b1;  // Always ready for a request
+    pmi_rsp_o.mack   = pmi_req_i.mreq;  // Complete immediately on request acceptance
+    pmi_rsp_o.mrdata = reg_rdata;
+    // Route internal logical errors to PMI response code
+    pmi_rsp_o.mresp  = pmi_req_i.mreq ? (pmi_req_i.mwe ? write_error : read_error) : 1'b0;
   end
 
-  // Directly assign data payloads
-  always_comb tx_data_o.data = reg_wdata_i[7:0];
-  always_comb tx_req_id_o.id = reg_wdata_i[7:0];
-  always_comb rx_req_id_o.id = reg_wdata_i[7:0];
+  // Directly assign data payloads to Datapath FIFOs
+  always_comb tx_data_o.data = pmi_req_i.mwdata[7:0];
+  always_comb tx_req_id_o.id = pmi_req_i.mwdata[7:0];
+  always_comb rx_req_id_o.id = pmi_req_i.mwdata[7:0];
 
   //////////////////////////////////////////////////////////////////////////////
   // WRITE LOGIC — Address Decoding & Error Checking
@@ -128,8 +120,8 @@ module adn_uart_register_interface
     tx_req_valid_o  = 1'b0;
     rx_req_valid_o  = 1'b0;
 
-    if (reg_wen_i) begin
-      case (reg_addr_i[11:0])
+    if (reg_wen) begin
+      case (reg_addr)
         UART_CTRL_OFFSET: write_error = 1'b0;
 
         UART_CFG_OFFSET: begin
@@ -170,26 +162,26 @@ module adn_uart_register_interface
   //////////////////////////////////////////////////////////////////////////////
   always_comb begin
     read_error       = 1'b1;  // Default to error
-    pmi_mrdata_o     = '0;
+    reg_rdata        = '0;
     rx_data_ready_o  = 1'b0;
     tx_grant_ready_o = 1'b0;
     rx_grant_ready_o = 1'b0;
 
-    if (reg_ren_i) begin
-      case (reg_addr_i[11:0])
+    if (reg_ren) begin
+      case (reg_addr)
         UART_CTRL_OFFSET: begin
-          read_error   = 1'b0;
-          pmi_mrdata_o = {{(DATA_WIDTH - $bits(uart_ctrl_reg_t)) {1'b0}}, uart_ctrl_o};
+          read_error = 1'b0;
+          reg_rdata  = {{(DATA_WIDTH - $bits(uart_ctrl_reg_t)) {1'b0}}, uart_ctrl_o};
         end
 
         UART_CFG_OFFSET: begin
-          read_error   = 1'b0;
-          pmi_mrdata_o = {{(DATA_WIDTH - $bits(uart_cfg_reg_t)) {1'b0}}, uart_cfg_o};
+          read_error = 1'b0;
+          reg_rdata  = {{(DATA_WIDTH - $bits(uart_cfg_reg_t)) {1'b0}}, uart_cfg_o};
         end
 
         UART_STAT_OFFSET: begin
-          read_error   = 1'b0;
-          pmi_mrdata_o = {{(DATA_WIDTH - $bits(uart_stat_reg_t)) {1'b0}}, uart_stat_o};
+          read_error = 1'b0;
+          reg_rdata  = {{(DATA_WIDTH - $bits(uart_stat_reg_t)) {1'b0}}, uart_stat_o};
         end
 
         UART_TXR_OFFSET, UART_TXD_OFFSET, UART_RXR_OFFSET: begin
@@ -199,13 +191,13 @@ module adn_uart_register_interface
         UART_TXGP_OFFSET: begin
           read_error = 1'b0;
           if (tx_grant_valid_i)
-            pmi_mrdata_o = {{(DATA_WIDTH - $bits(uart_id_t)) {1'b0}}, tx_grant_id_i};
+            reg_rdata = {{(DATA_WIDTH - $bits(uart_id_t)) {1'b0}}, tx_grant_id_i};
         end
 
         UART_TXG_OFFSET: begin
           read_error = 1'b0;
           if (tx_grant_valid_i) begin
-            pmi_mrdata_o = {{(DATA_WIDTH - $bits(uart_id_t)) {1'b0}}, tx_grant_id_i};
+            reg_rdata = {{(DATA_WIDTH - $bits(uart_id_t)) {1'b0}}, tx_grant_id_i};
             tx_grant_ready_o = 1'b1;  // Consuming read pops the arbiter grant
           end
         end
@@ -213,13 +205,13 @@ module adn_uart_register_interface
         UART_RXGP_OFFSET: begin
           read_error = 1'b0;
           if (rx_grant_valid_i)
-            pmi_mrdata_o = {{(DATA_WIDTH - $bits(uart_id_t)) {1'b0}}, rx_grant_id_i};
+            reg_rdata = {{(DATA_WIDTH - $bits(uart_id_t)) {1'b0}}, rx_grant_id_i};
         end
 
         UART_RXG_OFFSET: begin
           read_error = 1'b0;
           if (rx_grant_valid_i) begin
-            pmi_mrdata_o = {{(DATA_WIDTH - $bits(uart_id_t)) {1'b0}}, rx_grant_id_i};
+            reg_rdata = {{(DATA_WIDTH - $bits(uart_id_t)) {1'b0}}, rx_grant_id_i};
             rx_grant_ready_o = 1'b1;  // Consuming read pops the arbiter grant
           end
         end
@@ -227,14 +219,14 @@ module adn_uart_register_interface
         UART_RXD_OFFSET: begin
           read_error = 1'b0;
           if (rx_data_valid_i) begin
-            pmi_mrdata_o = {{(DATA_WIDTH - $bits(uart_data_t)) {1'b0}}, rx_data_i};
+            reg_rdata = {{(DATA_WIDTH - $bits(uart_data_t)) {1'b0}}, rx_data_i};
             rx_data_ready_o = 1'b1;  // Consuming read pops the RX FIFO
           end
         end
 
         UART_INT_EN_OFFSET: begin
-          read_error   = 1'b0;
-          pmi_mrdata_o = {{(DATA_WIDTH - $bits(uart_int_reg_t)) {1'b0}}, uart_int_en_o};
+          read_error = 1'b0;
+          reg_rdata  = {{(DATA_WIDTH - $bits(uart_int_reg_t)) {1'b0}}, uart_int_en_o};
         end
 
         default: ;
@@ -257,11 +249,11 @@ module adn_uart_register_interface
       if (uart_ctrl_o.rx_fifo_flush) uart_ctrl_o.rx_fifo_flush <= 1'b0;
 
       // Update structs on valid writes
-      if (reg_wen_i && !write_error) begin
-        case (reg_addr_i[11:0])
-          UART_CTRL_OFFSET:   uart_ctrl_o   <= reg_wdata_i;
-          UART_CFG_OFFSET:    uart_cfg_o    <= reg_wdata_i;
-          UART_INT_EN_OFFSET: uart_int_en_o <= reg_wdata_i;
+      if (reg_wen && !write_error) begin
+        case (reg_addr)
+          UART_CTRL_OFFSET:   uart_ctrl_o   <= pmi_req_i.mwdata;
+          UART_CFG_OFFSET:    uart_cfg_o    <= pmi_req_i.mwdata;
+          UART_INT_EN_OFFSET: uart_int_en_o <= pmi_req_i.mwdata;
           default: ;
         endcase
       end
