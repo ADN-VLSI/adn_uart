@@ -14,6 +14,8 @@
 |-|-|-|-|-|
 |ADDR_WIDTH|int||32||
 |DATA_WIDTH|int||32||
+|pmi_req_t|type||logic||
+|pmi_rsp_t|type||logic||
 
 
 ## Ports
