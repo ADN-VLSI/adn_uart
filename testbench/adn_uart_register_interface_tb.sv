@@ -568,6 +568,21 @@ module adn_uart_register_interface_tb;
     check_bit("mstrb==0 write treated as error", resp, 1'b1);
     check("CTRL unchanged after mstrb==0 write", uart_ctrl, before_ctrl);
   endtask
+  task automatic tc_all();
+    tc_001_reset_values();
+    tc_002_ctrl_rw_self_clear();
+    tc_003_cfg_gated_write();
+    tc_004_stat_ro_combinational();
+    tc_005_tx_data_path();
+    tc_006_tx_arb_request();
+    tc_007_tx_grant_peek_pop();
+    tc_008_rx_arb_request_grant();
+    tc_009_rx_data_path();
+    tc_010_int_en_rw();
+    tc_011_raz_write_only();
+    tc_012_illegal_address();
+    tc_013_mstrb_zero_error();
+  endtask
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   // SEQUENTIALS
@@ -619,21 +634,8 @@ module adn_uart_register_interface_tb;
       "TC_011": tc_011_raz_write_only();
       "TC_012": tc_012_illegal_address();
       "TC_013": tc_013_mstrb_zero_error();
-      default: begin
-        tc_001_reset_values();
-        tc_002_ctrl_rw_self_clear();
-        tc_003_cfg_gated_write();
-        tc_004_stat_ro_combinational();
-        tc_005_tx_data_path();
-        tc_006_tx_arb_request();
-        tc_007_tx_grant_peek_pop();
-        tc_008_rx_arb_request_grant();
-        tc_009_rx_data_path();
-        tc_010_int_en_rw();
-        tc_011_raz_write_only();
-        tc_012_illegal_address();
-        tc_013_mstrb_zero_error();
-      end
+      "TC_ALL": tc_all();
+      default : tc_all(); 
     endcase
 
     $finish;
